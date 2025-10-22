@@ -1,0 +1,26 @@
+customer_id,first_name,last_name,email,address,state
+1,John,Smith,john.smith@email.com,100 Maple St,CA
+2,Emma,Johnson,emma.j@email.com,200 Oak Ave,NY
+3,Michael,Brown,mbrown@email.com,300 Pine Rd,TX
+4,Sophia,Davis,sophia.d@email.com,400 Elm Street,FL
+5,William,Miller,w.miller@email.com,500 Birch Blvd,WA
+6,Olivia,Wilson,olivia.w@email.com,600 Cedar Lane,OR
+7,James,Moore,jmoore@email.com,700 Spruce Dr,CO
+8,Ava,Taylor,ava.taylor@email.com,800 Willow Way,AZ
+9,Robert,Anderson,randerson@email.com,900 Ash Court,NV
+10,Isabella,Thomas,isabella.t@email.com,1000 Poplar Pl,CA
+11,David,Jackson,djackson@email.com,1100 Sycamore St,NY
+12,Mia,White,mia.white@email.com,1200 Walnut Ave,TX
+13,Daniel,Harris,dharris@email.com,1300 Chestnut Rd,FL
+14,Charlotte,Martin,charlotte.m@email.com,1400 Hickory Ln,WA
+15,Joseph,Garcia,jgarcia@email.com,1500 Magnolia Dr,CA
+16,Amelia,Martinez,amelia.m@email.com,1600 Dogwood Ct,OR
+17,Christopher,Robinson,crobinson@email.com,1700 Redwood Blvd,CO
+18,Harper,Clark,harper.c@email.com,1800 Sequoia Way,AZ
+19,Matthew,Lewis,mlewis@email.com,1900 Cypress St,NV
+20,Evelyn,Lee,evelyn.lee@email.com,2000 Palm Ave,CA
+21,Andrew,Walker,awalker@email.com,2100 Beach Rd,FL
+22,Abigail,Hall,abigail.h@email.com,2200 River Ln,TX
+23,Joshua,Allen,jallen@email.com,2300 Lake Dr,NY
+24,Emily,Young,emily.young@email.com,2400 Mountain View,WA
+25,Ryan,King,rking@email.com,2500 Valley Ct,CO

@@ -1,0 +1,31 @@
+product_id,seller_id,description,category,product_price,product_name
+1,1,iPhone 15 Pro Max 256GB - Like New,Smartphones,1099.99,iPhone 15 Pro Max
+2,1,Samsung Galaxy S24 Ultra 512GB,Smartphones,1199.99,Samsung Galaxy S24
+3,5,Apple AirPods Pro 2nd Generation with USB-C,Audio,249.99,AirPods Pro 2
+4,5,Sony WH-1000XM5 Wireless Noise Canceling Headphones,Audio,399.99,Sony WH-1000XM5
+5,9,MacBook Air M3 15-inch 16GB RAM 512GB SSD,Laptops,1699.99,MacBook Air M3
+6,11,iPad Air 5th Gen 64GB WiFi - Space Gray,Tablets,549.99,iPad Air
+7,9,Ring Video Doorbell Pro 2 - Smart Home Security,Smart Home,249.99,Ring Doorbell Pro 2
+8,15,"Samsung 65"" QLED 4K Smart TV QN90C",TV & Video,1799.99,"Samsung 65"" QLED"
+9,2,Levi's 501 Original Fit Jeans - Dark Wash,Mens Clothing,69.99,Levi's 501 Jeans
+10,2,Nike Air Force 1 White Sneakers - Size 10,Mens Shoes,110.0,Nike Air Force 1
+11,6,Vintage Denim Jacket 90s Style - Medium,Mens Clothing,45.99,Vintage Denim Jacket
+12,10,Gucci Belt - Black Leather with Gold Buckle,Accessories,450.0,Gucci Belt
+13,14,"Organic Cotton T-Shirt Pack of 3 - Black, White, Gray",Mens Clothing,39.99,Organic Cotton Tees
+14,2,Adidas Ultraboost Running Shoes - Womens Size 8,Womens Shoes,180.0,Adidas Ultraboost
+15,10,Michael Kors Jet Set Handbag - Cognac,Accessories,298.0,MK Jet Set Bag
+16,3,KitchenAid Stand Mixer 5-Quart - Empire Red,Kitchen,379.99,KitchenAid Mixer
+17,3,Dyson V15 Detect Cordless Vacuum,Home Appliances,649.99,Dyson V15
+18,7,Outdoor Patio Furniture Set - 4 Piece Wicker,Outdoor,899.99,Patio Furniture Set
+19,12,Handmade Ceramic Vase Set - Modern Minimalist,Home Decor,89.99,Ceramic Vase Set
+20,7,Gardening Tool Set 10-Piece with Storage Bag,Garden,59.99,Garden Tool Set
+21,4,"Peloton Bike+ with 32"" HD Touchscreen",Exercise Equipment,2495.0,Peloton Bike+
+22,8,Adjustable Dumbbell Set 5-52.5 lbs,Exercise Equipment,399.99,Adjustable Dumbbells
+23,13,Wilson Pro Staff Tennis Racket - Professional Grade,Tennis,249.99,Wilson Tennis Racket
+24,4,Spalding NBA Official Basketball,Basketball,49.99,NBA Basketball
+25,13,Callaway Golf Club Set - Complete 12 Piece,Golf,899.0,Callaway Golf Set
+26,8,Yoga Mat Premium 6mm Thick with Carry Strap,Fitness,34.99,Premium Yoga Mat
+27,1,DJI Mini 3 Pro Drone with 4K Camera,Cameras,759.0,DJI Mini 3 Pro
+28,11,Kindle Paperwhite 11th Gen 16GB,Electronics,149.99,Kindle Paperwhite
+29,3,Nespresso Vertuo Coffee Machine - Chrome,Kitchen,199.99,Nespresso Vertuo
+30,6,Ray-Ban Aviator Sunglasses - Gold Frame,Accessories,169.0,Ray-Ban Aviator

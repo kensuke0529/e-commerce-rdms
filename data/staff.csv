@@ -1,0 +1,11 @@
+staff_id,department_id,last_name,first_name
+1,5,Johnson,Sarah
+2,5,Williams,Michael
+3,5,Brown,Emily
+4,5,Davis,James
+5,5,Martinez,Lisa
+6,1,Garcia,Robert
+7,2,Rodriguez,Maria
+8,3,Wilson,David
+9,4,Anderson,Jennifer
+10,1,Taylor,Christopher

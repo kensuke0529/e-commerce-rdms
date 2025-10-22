@@ -1,0 +1,11 @@
+sservice_id,seller_id,staff_id,duration_hours,service_date,description
+1,8,9,1,2024-12-02,Listing optimization consultation
+2,15,7,3,2024-10-20,Account verification assistance
+3,6,7,4,2024-10-16,Shipping label issue
+4,3,10,4,2024-11-18,Technical support
+5,1,8,4,2024-12-15,Inventory management help
+6,5,10,1,2024-12-19,Account verification assistance
+7,14,7,2,2024-12-20,Inventory management help
+8,2,6,2,2024-10-21,Payment processing setup
+9,7,10,2,2024-10-10,Listing optimization consultation
+10,11,9,4,2024-11-27,Inventory management help
