@@ -1,11 +1,88 @@
-sservice_id,seller_id,staff_id,duration_hours,service_date,description
-1,8,9,1,2024-12-02,Listing optimization consultation
-2,15,7,3,2024-10-20,Account verification assistance
-3,6,7,4,2024-10-16,Shipping label issue
-4,3,10,4,2024-11-18,Technical support
-5,1,8,4,2024-12-15,Inventory management help
-6,5,10,1,2024-12-19,Account verification assistance
-7,14,7,2,2024-12-20,Inventory management help
-8,2,6,2,2024-10-21,Payment processing setup
-9,7,10,2,2024-10-10,Listing optimization consultation
-10,11,9,4,2024-11-27,Inventory management help
+Sservice_id,Seller_id,staff_id,Duration_hours,Service_date,Description
+1,1,20,4,2024-04-17,Dispute resolution
+2,2,21,2,2024-04-18,Promotional campaign setup
+3,2,24,1,2024-03-13,Payment processing setup
+4,2,19,5,2024-11-11,Inventory management help
+5,3,17,4,2024-04-02,Bulk upload assistance
+6,4,16,2,2024-10-08,Promotional campaign setup
+7,4,24,1.5,2024-02-07,Promotional campaign setup
+8,4,17,0.5,2024-05-08,Shipping label issue
+9,5,25,1.5,2024-09-06,Performance metrics review
+10,5,18,4,2024-12-09,Shipping label issue
+11,5,17,3,2024-05-25,Account verification assistance
+12,6,21,2,2024-09-05,Performance metrics review
+13,7,20,3,2024-12-21,Payment processing setup
+14,7,25,1.5,2024-10-17,Bulk upload assistance
+15,7,21,1,2024-08-07,Listing optimization consultation
+16,8,19,4,2024-04-23,Dispute resolution
+17,8,22,5,2024-05-21,Performance metrics review
+18,9,21,2,2024-09-02,Technical support
+19,10,20,3,2024-09-06,Account verification assistance
+20,10,18,3,2024-11-26,Account verification assistance
+21,11,18,1,2024-10-02,Inventory management help
+22,11,17,0.5,2024-02-08,Product catalog update
+23,12,16,3,2024-10-24,Policy clarification
+24,12,25,0.5,2024-04-18,Product catalog update
+25,12,20,3,2024-10-05,Technical support
+26,13,18,2,2024-07-06,Shipping label issue
+27,13,25,1,2024-05-28,Technical support
+28,13,24,0.5,2024-09-18,Policy clarification
+29,14,24,4,2024-01-06,Shipping label issue
+30,14,25,1,2024-12-16,Bulk upload assistance
+31,15,18,1,2024-08-16,Payment processing setup
+32,15,25,4,2024-10-16,Payment processing setup
+33,15,23,0.5,2024-07-02,Shipping label issue
+34,16,19,1.5,2024-02-02,Performance metrics review
+35,16,19,4,2024-01-22,Shipping label issue
+36,17,21,2,2024-07-17,Technical support
+37,17,16,4,2024-01-21,Performance metrics review
+38,17,17,3,2024-12-26,Promotional campaign setup
+39,18,20,3,2024-10-23,Fee structure inquiry
+40,18,18,4,2024-07-11,Policy clarification
+41,19,25,5,2024-11-30,Account verification assistance
+42,19,24,2,2024-05-08,Shipping label issue
+43,20,22,5,2024-06-29,Performance metrics review
+44,20,23,3,2024-09-03,Listing optimization consultation
+45,20,24,2,2024-03-12,Payment processing setup
+46,21,17,4,2024-09-20,Inventory management help
+47,22,18,1,2024-04-05,Performance metrics review
+48,23,17,1,2024-12-04,Policy clarification
+49,23,21,2,2024-02-28,Promotional campaign setup
+50,23,23,1,2024-09-02,Fee structure inquiry
+51,24,22,1,2024-01-12,Listing optimization consultation
+52,25,25,1,2024-10-30,Payment processing setup
+53,26,24,3,2024-01-21,Payment processing setup
+54,26,16,1.5,2024-03-26,Payment processing setup
+55,26,24,3,2024-07-26,Fee structure inquiry
+56,27,16,5,2024-12-04,Inventory management help
+57,27,17,2,2024-04-20,Fee structure inquiry
+58,27,23,1,2024-09-03,Shipping label issue
+59,28,25,5,2024-03-14,Fee structure inquiry
+60,28,18,4,2024-11-15,Product catalog update
+61,29,18,1.5,2024-12-17,Technical support
+62,29,25,0.5,2024-10-29,Shipping label issue
+63,30,22,0.5,2024-03-08,Listing optimization consultation
+64,30,19,5,2024-09-24,Product catalog update
+65,31,22,3,2024-03-17,Account verification assistance
+66,31,18,3,2024-08-31,Fee structure inquiry
+67,31,16,3,2024-09-29,Bulk upload assistance
+68,32,17,4,2024-09-03,Payment processing setup
+69,33,24,5,2024-01-01,Promotional campaign setup
+70,33,22,2,2024-09-24,Performance metrics review
+71,33,16,3,2024-12-23,Policy clarification
+72,34,23,1.5,2024-07-14,Fee structure inquiry
+73,35,25,2,2024-02-20,Payment processing setup
+74,35,20,5,2024-09-01,Shipping label issue
+75,35,17,3,2024-05-25,Product catalog update
+76,36,20,0.5,2024-04-06,Dispute resolution
+77,36,16,3,2024-10-22,Account verification assistance
+78,37,16,4,2024-07-11,Shipping label issue
+79,37,21,1.5,2024-07-28,Account verification assistance
+80,37,18,4,2024-08-06,Fee structure inquiry
+81,38,20,2,2024-10-01,Fee structure inquiry
+82,38,21,1.5,2024-11-09,Promotional campaign setup
+83,39,19,3,2024-07-30,Bulk upload assistance
+84,39,24,1,2024-09-04,Performance metrics review
+85,40,24,1.5,2024-09-04,Inventory management help
+86,40,25,5,2024-06-25,Dispute resolution
+87,40,22,5,2024-03-11,Promotional campaign setup

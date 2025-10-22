@@ -19,7 +19,7 @@ from product as p
 join customer_review as cr  on p.product_id = cr.product_id 
 group by p.product_id
 having avg(cr.rating) > 3 and count(*) > 3
-order by avg_rating desc
+order by avg_rating desc;
 
 -- 3. Product performance dashboard - units sold, revenue, average rating, review count, bid activity (total bids, unique bidders).
 select 
@@ -36,7 +36,7 @@ join order_header as oh on p.product_id = oh.product_id
 join customer_review as cr  on p.product_id = cr.product_id 
 join payment as pa on pa.order_id = oh.order_id 
 join bid as b on cr.product_id = b.product_id
-group by p.product_id
+group by p.product_id;
 
 -- 4. Identify slow-moving inventory (products with less than 2 units sold).
 select 
@@ -46,4 +46,4 @@ select
 from product as p 
 join order_header as oh on p.product_id = oh.product_id 
 group by p.product_id
-having count(*) < 2
+having count(*) < 2;

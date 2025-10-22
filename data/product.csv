@@ -1,31 +1,151 @@
-product_id,seller_id,description,category,product_price,product_name
-1,1,iPhone 15 Pro Max 256GB - Like New,Smartphones,1099.99,iPhone 15 Pro Max
-2,1,Samsung Galaxy S24 Ultra 512GB,Smartphones,1199.99,Samsung Galaxy S24
-3,5,Apple AirPods Pro 2nd Generation with USB-C,Audio,249.99,AirPods Pro 2
-4,5,Sony WH-1000XM5 Wireless Noise Canceling Headphones,Audio,399.99,Sony WH-1000XM5
-5,9,MacBook Air M3 15-inch 16GB RAM 512GB SSD,Laptops,1699.99,MacBook Air M3
-6,11,iPad Air 5th Gen 64GB WiFi - Space Gray,Tablets,549.99,iPad Air
-7,9,Ring Video Doorbell Pro 2 - Smart Home Security,Smart Home,249.99,Ring Doorbell Pro 2
-8,15,"Samsung 65"" QLED 4K Smart TV QN90C",TV & Video,1799.99,"Samsung 65"" QLED"
-9,2,Levi's 501 Original Fit Jeans - Dark Wash,Mens Clothing,69.99,Levi's 501 Jeans
-10,2,Nike Air Force 1 White Sneakers - Size 10,Mens Shoes,110.0,Nike Air Force 1
-11,6,Vintage Denim Jacket 90s Style - Medium,Mens Clothing,45.99,Vintage Denim Jacket
-12,10,Gucci Belt - Black Leather with Gold Buckle,Accessories,450.0,Gucci Belt
-13,14,"Organic Cotton T-Shirt Pack of 3 - Black, White, Gray",Mens Clothing,39.99,Organic Cotton Tees
-14,2,Adidas Ultraboost Running Shoes - Womens Size 8,Womens Shoes,180.0,Adidas Ultraboost
-15,10,Michael Kors Jet Set Handbag - Cognac,Accessories,298.0,MK Jet Set Bag
-16,3,KitchenAid Stand Mixer 5-Quart - Empire Red,Kitchen,379.99,KitchenAid Mixer
-17,3,Dyson V15 Detect Cordless Vacuum,Home Appliances,649.99,Dyson V15
-18,7,Outdoor Patio Furniture Set - 4 Piece Wicker,Outdoor,899.99,Patio Furniture Set
-19,12,Handmade Ceramic Vase Set - Modern Minimalist,Home Decor,89.99,Ceramic Vase Set
-20,7,Gardening Tool Set 10-Piece with Storage Bag,Garden,59.99,Garden Tool Set
-21,4,"Peloton Bike+ with 32"" HD Touchscreen",Exercise Equipment,2495.0,Peloton Bike+
-22,8,Adjustable Dumbbell Set 5-52.5 lbs,Exercise Equipment,399.99,Adjustable Dumbbells
-23,13,Wilson Pro Staff Tennis Racket - Professional Grade,Tennis,249.99,Wilson Tennis Racket
-24,4,Spalding NBA Official Basketball,Basketball,49.99,NBA Basketball
-25,13,Callaway Golf Club Set - Complete 12 Piece,Golf,899.0,Callaway Golf Set
-26,8,Yoga Mat Premium 6mm Thick with Carry Strap,Fitness,34.99,Premium Yoga Mat
-27,1,DJI Mini 3 Pro Drone with 4K Camera,Cameras,759.0,DJI Mini 3 Pro
-28,11,Kindle Paperwhite 11th Gen 16GB,Electronics,149.99,Kindle Paperwhite
-29,3,Nespresso Vertuo Coffee Machine - Chrome,Kitchen,199.99,Nespresso Vertuo
-30,6,Ray-Ban Aviator Sunglasses - Gold Frame,Accessories,169.0,Ray-Ban Aviator
+product_id,Seller_id,Description,category,Product_price,Product_name
+1,20,iPhone 15 Pro Max 256GB - High quality electronics,Smartphones,1099.99,iPhone 15 Pro Max 256GB
+2,5,Samsung Galaxy S24 Ultra 512GB - High quality electronics,Smartphones,1199.99,Samsung Galaxy S24 Ultra 512GB
+3,5,Google Pixel 8 Pro 128GB - High quality electronics,Smartphones,899.99,Google Pixel 8 Pro 128GB
+4,15,OnePlus 12 256GB - High quality electronics,Smartphones,799.99,OnePlus 12 256GB
+5,5,Apple AirPods Pro 2nd Gen - High quality electronics,Audio,249.99,Apple AirPods Pro 2nd Gen
+6,5,Sony WH-1000XM5 Headphones - High quality electronics,Audio,399.99,Sony WH-1000XM5 Headphones
+7,5,Bose QuietComfort Earbuds - High quality electronics,Audio,299.99,Bose QuietComfort Earbuds
+8,11,JBL Flip 6 Bluetooth Speaker - High quality electronics,Audio,129.99,JBL Flip 6 Bluetooth Speaker
+9,1,MacBook Air M3 15-inch - High quality electronics,Laptops,1699.99,MacBook Air M3 15-inch
+10,1,Dell XPS 13 Laptop - High quality electronics,Laptops,1299.99,Dell XPS 13 Laptop
+11,15,HP Pavilion Gaming Laptop - High quality electronics,Laptops,899.99,HP Pavilion Gaming Laptop
+12,16,Lenovo ThinkPad X1 Carbon - High quality electronics,Laptops,1599.99,Lenovo ThinkPad X1 Carbon
+13,5,iPad Air 5th Gen 64GB - High quality electronics,Tablets,549.99,iPad Air 5th Gen 64GB
+14,5,Samsung Galaxy Tab S9 - High quality electronics,Tablets,799.99,Samsung Galaxy Tab S9
+15,15,Amazon Fire HD 10 - High quality electronics,Tablets,149.99,Amazon Fire HD 10
+16,16,Ring Video Doorbell Pro 2 - High quality electronics,Smart Home,249.99,Ring Video Doorbell Pro 2
+17,9,Nest Learning Thermostat - High quality electronics,Smart Home,249.99,Nest Learning Thermostat
+18,16,Philips Hue Starter Kit - High quality electronics,Smart Home,199.99,Philips Hue Starter Kit
+19,15,"Samsung 65"" QLED 4K TV - High quality electronics",TV & Video,1799.99,"Samsung 65"" QLED 4K TV"
+20,15,"LG 55"" OLED TV - High quality electronics",TV & Video,1299.99,"LG 55"" OLED TV"
+21,1,"Sony 75"" 4K TV - High quality electronics",TV & Video,2199.99,"Sony 75"" 4K TV"
+22,5,DJI Mini 3 Pro Drone - High quality electronics,Cameras,759.0,DJI Mini 3 Pro Drone
+23,32,Canon EOS R6 Camera Body - High quality electronics,Cameras,2499.0,Canon EOS R6 Camera Body
+24,5,GoPro Hero 12 Black - High quality electronics,Cameras,399.99,GoPro Hero 12 Black
+25,23,Kindle Paperwhite 16GB - High quality electronics,Electronics,149.99,Kindle Paperwhite 16GB
+26,5,Apple Watch Series 9 - High quality electronics,Wearables,429.99,Apple Watch Series 9
+27,11,Fitbit Charge 6 - High quality electronics,Wearables,159.99,Fitbit Charge 6
+28,24,PlayStation 5 Console - High quality electronics,Gaming,499.99,PlayStation 5 Console
+29,24,Xbox Series X - High quality electronics,Gaming,499.99,Xbox Series X
+30,24,Nintendo Switch OLED - High quality electronics,Gaming,349.99,Nintendo Switch OLED
+31,20,Logitech MX Master 3S Mouse - High quality electronics,Accessories,99.99,Logitech MX Master 3S Mouse
+32,24,Mechanical Gaming Keyboard RGB - High quality electronics,Accessories,149.99,Mechanical Gaming Keyboard RGB
+33,16,Webcam 4K HD - High quality electronics,Accessories,129.99,Webcam 4K HD
+34,20,USB-C Hub 7-in-1 - High quality electronics,Accessories,49.99,USB-C Hub 7-in-1
+35,1,Portable SSD 1TB - High quality electronics,Storage,119.99,Portable SSD 1TB
+36,16,External Hard Drive 4TB - High quality electronics,Storage,89.99,External Hard Drive 4TB
+37,16,Wireless Charger 3-in-1 - High quality electronics,Accessories,79.99,Wireless Charger 3-in-1
+38,15,Power Bank 20000mAh - High quality electronics,Accessories,39.99,Power Bank 20000mAh
+39,9,Smart WiFi Router - High quality electronics,Networking,199.99,Smart WiFi Router
+40,16,Mesh WiFi System 3-Pack - High quality electronics,Networking,299.99,Mesh WiFi System 3-Pack
+41,10,Levi's 501 Jeans - Quality fashion item,Mens Clothing,69.99,Levi's 501 Jeans
+42,37,Nike Air Force 1 Sneakers - Quality fashion item,Mens Shoes,110.0,Nike Air Force 1 Sneakers
+43,37,Adidas Ultraboost Shoes - Quality fashion item,Womens Shoes,180.0,Adidas Ultraboost Shoes
+44,14,Vintage Denim Jacket - Quality fashion item,Mens Clothing,45.99,Vintage Denim Jacket
+45,10,Gucci Belt Black Leather - Quality fashion item,Accessories,450.0,Gucci Belt Black Leather
+46,17,Organic Cotton T-Shirt 3-Pack - Quality fashion item,Mens Clothing,39.99,Organic Cotton T-Shirt 3-Pack
+47,10,Michael Kors Handbag - Quality fashion item,Accessories,298.0,Michael Kors Handbag
+48,6,Ray-Ban Aviator Sunglasses - Quality fashion item,Accessories,169.0,Ray-Ban Aviator Sunglasses
+49,17,Columbia Winter Jacket - Quality fashion item,Outerwear,199.99,Columbia Winter Jacket
+50,2,North Face Fleece - Quality fashion item,Outerwear,149.99,North Face Fleece
+51,19,Patagonia Backpack - Quality fashion item,Accessories,89.99,Patagonia Backpack
+52,17,Nike Running Shorts - Quality fashion item,Athletic Wear,34.99,Nike Running Shorts
+53,2,Lululemon Yoga Pants - Quality fashion item,Athletic Wear,98.0,Lululemon Yoga Pants
+54,17,Under Armour Hoodie - Quality fashion item,Mens Clothing,54.99,Under Armour Hoodie
+55,2,Converse Chuck Taylor Shoes - Quality fashion item,Shoes,65.0,Converse Chuck Taylor Shoes
+56,2,Vans Old Skool Sneakers - Quality fashion item,Shoes,70.0,Vans Old Skool Sneakers
+57,37,Timberland Boots - Quality fashion item,Mens Shoes,189.99,Timberland Boots
+58,37,UGG Classic Boots - Quality fashion item,Womens Shoes,179.99,UGG Classic Boots
+59,17,Calvin Klein Underwear 3-Pack - Quality fashion item,Mens Clothing,42.99,Calvin Klein Underwear 3-Pack
+60,2,Tommy Hilfiger Polo Shirt - Quality fashion item,Mens Clothing,79.99,Tommy Hilfiger Polo Shirt
+61,17,Ralph Lauren Oxford Shirt - Quality fashion item,Mens Clothing,98.0,Ralph Lauren Oxford Shirt
+62,17,Dress Shirt Slim Fit - Quality fashion item,Mens Clothing,49.99,Dress Shirt Slim Fit
+63,17,Business Casual Blazer - Quality fashion item,Mens Clothing,149.99,Business Casual Blazer
+64,17,Formal Dress Pants - Quality fashion item,Mens Clothing,79.99,Formal Dress Pants
+65,21,Leather Wallet RFID - Quality fashion item,Accessories,39.99,Leather Wallet RFID
+66,21,Designer Watch Gold - Quality fashion item,Accessories,599.0,Designer Watch Gold
+67,31,Silver Chain Necklace - Quality fashion item,Jewelry,129.99,Silver Chain Necklace
+68,31,Diamond Stud Earrings - Quality fashion item,Jewelry,299.99,Diamond Stud Earrings
+69,31,Fashion Ring Set 5pcs - Quality fashion item,Jewelry,34.99,Fashion Ring Set 5pcs
+70,10,Leather Gloves - Quality fashion item,Accessories,44.99,Leather Gloves
+71,2,Wool Scarf - Quality fashion item,Accessories,29.99,Wool Scarf
+72,17,Baseball Cap Collection - Quality fashion item,Accessories,24.99,Baseball Cap Collection
+73,2,Beanie Winter Hat - Quality fashion item,Accessories,19.99,Beanie Winter Hat
+74,2,Dress Socks 6-Pack - Quality fashion item,Mens Clothing,24.99,Dress Socks 6-Pack
+75,2,Athletic Socks 8-Pack - Quality fashion item,Athletic Wear,29.99,Athletic Socks 8-Pack
+76,2,Swim Trunks - Quality fashion item,Mens Clothing,39.99,Swim Trunks
+77,2,Summer Dress - Quality fashion item,Womens Clothing,59.99,Summer Dress
+78,10,Blouse Silk - Quality fashion item,Womens Clothing,79.99,Blouse Silk
+79,2,Pencil Skirt - Quality fashion item,Womens Clothing,49.99,Pencil Skirt
+80,10,Evening Gown - Quality fashion item,Womens Clothing,199.99,Evening Gown
+81,3,KitchenAid Stand Mixer - Home essentials,Kitchen,379.99,KitchenAid Stand Mixer
+82,3,Dyson V15 Vacuum - Home essentials,Home Appliances,649.99,Dyson V15 Vacuum
+83,18,Ninja Air Fryer - Home essentials,Kitchen,129.99,Ninja Air Fryer
+84,3,Instant Pot 8-Quart - Home essentials,Kitchen,119.99,Instant Pot 8-Quart
+85,3,Nespresso Coffee Machine - Home essentials,Kitchen,199.99,Nespresso Coffee Machine
+86,18,Keurig K-Elite - Home essentials,Kitchen,169.99,Keurig K-Elite
+87,18,Vitamix Blender - Home essentials,Kitchen,449.99,Vitamix Blender
+88,18,Food Processor 14-Cup - Home essentials,Kitchen,199.99,Food Processor 14-Cup
+89,3,Cast Iron Skillet Set - Home essentials,Kitchen,89.99,Cast Iron Skillet Set
+90,3,Knife Set 15-Piece - Home essentials,Kitchen,149.99,Knife Set 15-Piece
+91,7,Patio Furniture Set - Home essentials,Outdoor,899.99,Patio Furniture Set
+92,7,Outdoor Grill Propane - Home essentials,Outdoor,399.99,Outdoor Grill Propane
+93,7,Garden Tool Set - Home essentials,Garden,59.99,Garden Tool Set
+94,7,Lawn Mower Electric - Home essentials,Garden,299.99,Lawn Mower Electric
+95,34,Pressure Washer - Home essentials,Outdoor,249.99,Pressure Washer
+96,12,Ceramic Vase Set - Home essentials,Home Decor,89.99,Ceramic Vase Set
+97,12,Wall Art Canvas 3-Piece - Home essentials,Home Decor,129.99,Wall Art Canvas 3-Piece
+98,3,Area Rug 8x10 - Home essentials,Home Decor,299.99,Area Rug 8x10
+99,3,Throw Pillows Set of 4 - Home essentials,Home Decor,49.99,Throw Pillows Set of 4
+100,36,Table Lamp Modern - Home essentials,Lighting,79.99,Table Lamp Modern
+101,36,Floor Lamp LED - Home essentials,Lighting,149.99,Floor Lamp LED
+102,36,Chandelier Crystal - Home essentials,Lighting,399.99,Chandelier Crystal
+103,3,Bed Sheets Queen Set - Home essentials,Bedding,79.99,Bed Sheets Queen Set
+104,3,Comforter Set King - Home essentials,Bedding,149.99,Comforter Set King
+105,3,Memory Foam Pillow 2-Pack - Home essentials,Bedding,59.99,Memory Foam Pillow 2-Pack
+106,3,Bath Towel Set 6-Piece - Home essentials,Bath,49.99,Bath Towel Set 6-Piece
+107,3,Shower Curtain Set - Home essentials,Bath,29.99,Shower Curtain Set
+108,3,Bath Mat Non-Slip - Home essentials,Bath,24.99,Bath Mat Non-Slip
+109,3,Storage Bins Set of 6 - Home essentials,Organization,39.99,Storage Bins Set of 6
+110,3,Closet Organizer System - Home essentials,Organization,129.99,Closet Organizer System
+111,3,Bookshelf 5-Tier - Home essentials,Furniture,89.99,Bookshelf 5-Tier
+112,29,Office Desk Modern - Home essentials,Furniture,299.99,Office Desk Modern
+113,29,Ergonomic Office Chair - Home essentials,Furniture,249.99,Ergonomic Office Chair
+114,29,Filing Cabinet 3-Drawer - Home essentials,Furniture,179.99,Filing Cabinet 3-Drawer
+115,3,Dining Table Set 5-Piece - Home essentials,Furniture,599.99,Dining Table Set 5-Piece
+116,12,Coffee Table Glass Top - Home essentials,Furniture,199.99,Coffee Table Glass Top
+117,3,TV Stand Entertainment Center - Home essentials,Furniture,249.99,TV Stand Entertainment Center
+118,3,Curtains Blackout 2-Panel - Home essentials,Home Decor,44.99,Curtains Blackout 2-Panel
+119,3,Mirror Full Length - Home essentials,Home Decor,79.99,Mirror Full Length
+120,12,Plant Stand 3-Tier - Home essentials,Garden,39.99,Plant Stand 3-Tier
+121,8,Peloton Bike+ - Quality sports equipment,Exercise Equipment,2495.0,Peloton Bike+
+122,8,Adjustable Dumbbell Set - Quality sports equipment,Exercise Equipment,399.99,Adjustable Dumbbell Set
+123,8,Treadmill Folding - Quality sports equipment,Exercise Equipment,799.99,Treadmill Folding
+124,8,Rowing Machine - Quality sports equipment,Exercise Equipment,599.99,Rowing Machine
+125,8,Resistance Bands Set - Quality sports equipment,Fitness,29.99,Resistance Bands Set
+126,4,Yoga Mat Premium 6mm - Quality sports equipment,Fitness,34.99,Yoga Mat Premium 6mm
+127,4,Kettlebell Set 3-Piece - Quality sports equipment,Exercise Equipment,89.99,Kettlebell Set 3-Piece
+128,8,Pull-up Bar Doorway - Quality sports equipment,Exercise Equipment,39.99,Pull-up Bar Doorway
+129,8,Exercise Ball 65cm - Quality sports equipment,Fitness,24.99,Exercise Ball 65cm
+130,13,Wilson Tennis Racket Pro - Quality sports equipment,Tennis,249.99,Wilson Tennis Racket Pro
+131,13,Tennis Balls 12-Pack - Quality sports equipment,Tennis,19.99,Tennis Balls 12-Pack
+132,13,Spalding NBA Basketball - Quality sports equipment,Basketball,49.99,Spalding NBA Basketball
+133,13,Basketball Hoop Portable - Quality sports equipment,Basketball,299.99,Basketball Hoop Portable
+134,13,Callaway Golf Club Set - Quality sports equipment,Golf,899.0,Callaway Golf Club Set
+135,13,Golf Balls 24-Pack - Quality sports equipment,Golf,39.99,Golf Balls 24-Pack
+136,13,Soccer Ball Official Size - Quality sports equipment,Soccer,29.99,Soccer Ball Official Size
+137,4,Football NFL Official - Quality sports equipment,Football,49.99,Football NFL Official
+138,13,Baseball Glove Leather - Quality sports equipment,Baseball,89.99,Baseball Glove Leather
+139,38,"Bicycle Mountain 27.5"" - Quality sports equipment",Cycling,599.99,"Bicycle Mountain 27.5"""
+140,38,Bike Helmet Adult - Quality sports equipment,Cycling,59.99,Bike Helmet Adult
+141,19,Camping Tent 4-Person - Quality sports equipment,Outdoor,199.99,Camping Tent 4-Person
+142,19,Sleeping Bag 20°F - Quality sports equipment,Outdoor,79.99,Sleeping Bag 20°F
+143,19,Hiking Backpack 50L - Quality sports equipment,Outdoor,129.99,Hiking Backpack 50L
+144,19,Fishing Rod Combo - Quality sports equipment,Fishing,89.99,Fishing Rod Combo
+145,19,Cooler 50-Quart - Quality sports equipment,Outdoor,149.99,Cooler 50-Quart
+146,13,Boxing Gloves 16oz - Quality sports equipment,Fitness,59.99,Boxing Gloves 16oz
+147,4,Jump Rope Speed - Quality sports equipment,Fitness,14.99,Jump Rope Speed
+148,4,Foam Roller Massage - Quality sports equipment,Fitness,29.99,Foam Roller Massage
+149,4,Protein Shaker Bottle - Quality sports equipment,Fitness,12.99,Protein Shaker Bottle
+150,13,Sports Water Bottle 32oz - Quality sports equipment,Fitness,24.99,Sports Water Bottle 32oz

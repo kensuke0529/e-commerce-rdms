@@ -67,7 +67,7 @@ from payment as p
 join order_header as h on p.order_id  = h.order_id
 join product as pr on h.product_id =pr.product_id 
 group by pr.category
-order by per_cat_revenue desc
+order by per_cat_revenue desc;
 
 -- Calculate revenue per seller with 10% platform fee deduction. Rank sellers by net revenue and identify top 20% performers.
 select 

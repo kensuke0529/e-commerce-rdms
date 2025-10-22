@@ -31,14 +31,14 @@ with recency_days as (
 )
 select *
 from recency_days 
-order by days_since_last_order  
+order by days_since_last_order  ;
 
 -- 2. how many orders 
 select 
 	customer_id,
 	count(*) as total_purchase
 from order_header
-group by customer_id
+group by customer_id;
 
 -- 3. total_spending
 select 
@@ -46,7 +46,7 @@ select
 	sum(p.amount) as total_spending
 from order_header as oh
 join payment as p on oh.order_id = p.order_id
-group by oh.customer_id 
+group by oh.customer_id ;
 
 -- Combined
 select
@@ -64,7 +64,7 @@ select
 from order_header as  oh 
 join customer as c on oh.customer_id = c.customer_id 
 join payment as p on oh.order_id = p.order_id
-group by c.customer_id, c.first_name, c.last_name
+group by c.customer_id, c.first_name, c.last_name;
 	
 	
 -- calculate customer retention rate by cohort (group by first purchase month, track repeat purchases)

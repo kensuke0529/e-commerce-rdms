@@ -1,4 +1,4 @@
-seller_id,description,address,state_province
+seller_id,Description,Address,State_province
 1,TechGuru Electronics - Premium seller since 2018,123 Silicon Valley Blvd,CA
 2,Fashion Forward - Trendy clothing boutique,456 Fashion Ave,NY
 3,Home Essentials Pro - Quality home goods,789 Comfort Street,TX
@@ -14,3 +14,28 @@ seller_id,description,address,state_province
 13,Pro Athletes Shop - Used by professionals,159 Champions Way,FL
 14,Eco Fashion Hub - Sustainable clothing,357 Green Fashion St,WA
 15,Quick Ship Electronics - Same day shipping,486 Express Lane,NV
+16,Mega Mart Electronics - Volume seller,2100 Commerce Blvd,CA
+17,Urban Style Boutique - Modern fashion trends,2200 Metro Ave,NY
+18,Kitchen Pro Supplies - Chef approved tools,2300 Culinary Way,IL
+19,Outdoor Adventure Gear - Camping and hiking,2400 Mountain Trail,CO
+20,Mobile Accessories Hub - Phone cases and more,2500 Tech Center,CA
+21,Luxury Watch Exchange - Premium timepieces,2600 Elite Plaza,NY
+22,Pet Paradise Supplies - Everything for pets,2700 Animal Ln,FL
+23,Book Haven - New and used books,2800 Literary Rd,MA
+24,Gaming Central - Consoles and games,2900 Gamer Ave,WA
+25,Beauty Bliss - Cosmetics and skincare,3000 Glamour St,CA
+26,Auto Parts Direct - Car accessories,3100 Motor Pkwy,MI
+27,Music Instruments Plus - For all musicians,3200 Melody Lane,TN
+28,Baby World - Everything for babies,3300 Nursery Rd,TX
+29,Office Supply Center - Business essentials,3400 Corporate Dr,NY
+30,Toy Kingdom - Fun for all ages,3500 Playful Way,CA
+31,Jewelry Emporium - Fine and costume jewelry,3600 Diamond Ct,NY
+32,Photography Pro Shop - Cameras and equipment,3700 Shutter St,CA
+33,Craft Supplies Unlimited - DIY materials,3800 Creative Blvd,OR
+34,Tool Time Warehouse - Power and hand tools,3900 Builder Ave,TX
+35,Health & Wellness Store - Vitamins and supplements,4000 Vitality Ln,FL
+36,Lighting Boutique - Modern fixtures,4100 Bright Way,IL
+37,Footwear Factory - Shoes for everyone,4200 Shoe St,CA
+38,Bike Shop Central - Cycling equipment,4300 Pedal Pkwy,CO
+39,Luggage Outlet - Travel bags and suitcases,4400 Journey Rd,NY
+40,Party Supplies Plus - Decorations and more,4500 Celebration Ave,CA

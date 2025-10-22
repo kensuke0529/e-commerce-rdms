@@ -1,34 +1,176 @@
-review_id,customer_id,product_id,description,rating
-1,12,5,"Perfect condition, very happy!",5
-2,21,29,"As expected, good value.",4
-3,19,26,Disappointed with quality.,2
-4,25,7,"Will buy again, 5 stars!",5
-5,20,11,Item was damaged.,1
-6,13,19,"Will buy again, 5 stars!",5
-7,6,11,Highly recommend this seller!,5
-8,25,21,Item was damaged.,1
-9,14,19,"As expected, good value.",4
-10,19,19,Fair for the price.,3
-11,1,10,"Perfect condition, very happy!",5
-12,8,11,"As expected, good value.",4
-13,9,11,"Good product, minor issues.",4
-14,18,22,Decent but could be better.,3
-15,13,19,"As expected, good value.",4
-16,14,4,Excellent product! Exactly as described.,5
-17,18,19,Shipping took too long.,2
-18,24,19,Decent but could be better.,3
-19,8,15,"Good product, minor issues.",4
-20,4,9,"Perfect condition, very happy!",5
-21,25,18,Some issues with item.,2
-22,14,19,"Perfect condition, very happy!",5
-23,13,8,"Good product, minor issues.",4
-24,13,16,"Nice quality, shipped quickly.",4
-25,14,19,"As expected, good value.",4
-26,8,18,Very poor quality.,1
-27,3,14,OK but not great.,3
-28,8,23,Satisfied with this item.,4
-29,23,11,Disappointed with quality.,2
-30,11,19,"Fast shipping, great quality!",5
-31,8,20,Highly recommend this seller!,5
-32,14,19,"Perfect condition, very happy!",5
-33,18,20,"As expected, good value.",4
+review_ID,customer_ID,product_id,description,rating
+1,60,47,Best purchase ever!,5
+2,65,145,Do not buy!,1
+3,74,140,Outstanding purchase!,5
+4,73,100,Recommend with minor reservations.,4
+5,73,91,Good but not perfect.,4
+6,17,114,Recommend with minor reservations.,4
+7,12,68,Had problems.,2
+8,46,112,Excellent product! Exactly as described.,5
+9,69,28,Happy with purchase overall.,4
+10,11,15,Fantastic quality!,5
+11,43,8,"Good product, minor issues.",4
+12,57,43,Exceeded expectations!,5
+13,64,49,Standard quality.,3
+14,48,149,Highly recommend this seller!,5
+15,17,52,Satisfied with this item.,4
+16,32,83,Outstanding purchase!,5
+17,75,22,Acceptable.,3
+18,9,6,Pretty good overall.,4
+19,8,4,"Will buy again, 5 stars!",5
+20,6,32,Met basic expectations.,3
+21,48,134,"Fast shipping, great quality!",5
+22,51,79,Fantastic quality!,5
+23,42,105,"Perfect condition, very happy!",5
+24,35,116,Highly recommend this seller!,5
+25,57,2,Highly recommend this seller!,5
+26,93,142,Good but not perfect.,4
+27,3,24,Best purchase ever!,5
+28,42,78,Recommend with minor reservations.,4
+29,88,94,Happy with purchase overall.,4
+30,11,103,Fair for the price.,3
+31,27,27,"Fast shipping, great quality!",5
+32,50,127,"Will buy again, 5 stars!",5
+33,85,22,Good but not perfect.,4
+34,97,6,Solid purchase.,4
+35,98,104,Recommend with minor reservations.,4
+36,5,132,Fantastic quality!,5
+37,18,61,"Will buy again, 5 stars!",5
+38,58,16,Good but not perfect.,4
+39,12,72,Best purchase ever!,5
+40,12,21,Satisfied with this item.,4
+41,5,39,Highly recommend this seller!,5
+42,66,35,Outstanding purchase!,5
+43,47,14,Absolutely love it!,5
+44,21,112,"Fast shipping, great quality!",5
+45,60,79,Decent but could be better.,3
+46,66,117,Satisfied with this item.,4
+47,44,125,Exceeded expectations!,5
+48,4,128,Outstanding purchase!,5
+49,98,1,Worth the money.,4
+50,4,4,"Average product, nothing special.",3
+51,31,46,"Will buy again, 5 stars!",5
+52,100,117,Acceptable.,3
+53,18,52,Quality concerns.,2
+54,16,45,Had problems.,2
+55,82,128,"Fast shipping, great quality!",5
+56,59,3,Happy with purchase overall.,4
+57,88,118,Exceeded expectations!,5
+58,21,24,Fair for the price.,3
+59,81,148,Highly recommend this seller!,5
+60,78,60,Excellent product! Exactly as described.,5
+61,64,133,Outstanding purchase!,5
+62,81,20,Good but not perfect.,4
+63,41,89,Happy with purchase overall.,4
+64,38,23,It works.,3
+65,11,25,Absolutely love it!,5
+66,56,8,Good but not perfect.,4
+67,72,59,Best purchase ever!,5
+68,8,83,OK but not great.,3
+69,39,115,Solid purchase.,4
+70,34,77,"Average product, nothing special.",3
+71,45,18,Happy with purchase overall.,4
+72,50,110,Good but not perfect.,4
+73,83,136,Best purchase ever!,5
+74,22,108,Solid purchase.,4
+75,52,1,Excellent product! Exactly as described.,5
+76,72,102,Solid purchase.,4
+77,14,145,"As expected, good value.",4
+78,49,67,Exceeded expectations!,5
+79,100,37,OK but not great.,3
+80,34,141,Fantastic quality!,5
+81,73,136,"Will buy again, 5 stars!",5
+82,53,39,Fantastic quality!,5
+83,53,2,"Nice quality, shipped quickly.",4
+84,4,57,OK but not great.,3
+85,76,102,Worth the money.,4
+86,53,9,Best purchase ever!,5
+87,56,7,Happy with purchase overall.,4
+88,7,1,Excellent product! Exactly as described.,5
+89,27,85,"Will buy again, 5 stars!",5
+90,50,57,Neither good nor bad.,3
+91,67,58,Met basic expectations.,3
+92,98,140,Pretty good overall.,4
+93,4,65,Worth the money.,4
+94,6,114,"Good product, minor issues.",4
+95,94,42,Shipping took too long.,2
+96,52,77,Solid purchase.,4
+97,32,135,Happy with purchase overall.,4
+98,3,19,"Will buy again, 5 stars!",5
+99,24,70,"Fast shipping, great quality!",5
+100,95,78,Worth the money.,4
+101,45,97,Excellent product! Exactly as described.,5
+102,83,84,"Nice quality, shipped quickly.",4
+103,76,92,"Perfect condition, very happy!",5
+104,13,23,Satisfied with this item.,4
+105,17,96,"Average product, nothing special.",3
+106,18,30,Satisfied with this item.,4
+107,8,146,"Perfect condition, very happy!",5
+108,56,13,"Perfect condition, very happy!",5
+109,45,128,Acceptable.,3
+110,41,100,Very poor quality.,1
+111,15,27,Decent but could be better.,3
+112,50,45,Absolutely love it!,5
+113,9,135,Highly recommend this seller!,5
+114,95,49,"Perfect condition, very happy!",5
+115,91,70,Recommend with minor reservations.,4
+116,47,4,Excellent product! Exactly as described.,5
+117,47,109,Happy with purchase overall.,4
+118,40,17,Highly recommend this seller!,5
+119,25,42,Average experience.,3
+120,39,73,Best purchase ever!,5
+121,28,68,Completely disappointed.,1
+122,12,84,"Will buy again, 5 stars!",5
+123,82,19,Worth the money.,4
+124,75,22,Worth the money.,4
+125,6,115,Fantastic quality!,5
+126,96,81,Worth the money.,4
+127,18,99,Absolutely love it!,5
+128,21,130,Average experience.,3
+129,77,108,Satisfied with this item.,4
+130,83,35,"Good product, minor issues.",4
+131,59,40,Happy with purchase overall.,4
+132,64,76,Outstanding purchase!,5
+133,5,126,OK but not great.,3
+134,50,94,Exceeded expectations!,5
+135,66,102,Worth the money.,4
+136,14,119,Fair for the price.,3
+137,72,144,Pretty good overall.,4
+138,15,122,Not as described.,2
+139,76,95,Highly recommend this seller!,5
+140,53,143,"Perfect condition, very happy!",5
+141,82,35,"Nice quality, shipped quickly.",4
+142,10,70,Exceeded expectations!,5
+143,32,36,Recommend with minor reservations.,4
+144,32,15,Pretty good overall.,4
+145,56,66,"Fast shipping, great quality!",5
+146,39,92,"Perfect condition, very happy!",5
+147,73,91,"Nice quality, shipped quickly.",4
+148,99,92,Excellent product! Exactly as described.,5
+149,65,102,Exceeded expectations!,5
+150,57,38,Excellent product! Exactly as described.,5
+151,74,44,"Good product, minor issues.",4
+152,49,95,"Fast shipping, great quality!",5
+153,82,112,"Fast shipping, great quality!",5
+154,58,104,Fantastic quality!,5
+155,31,33,Average experience.,3
+156,34,120,Met basic expectations.,3
+157,21,60,Exceeded expectations!,5
+158,60,18,Absolutely love it!,5
+159,62,92,Exceeded expectations!,5
+160,48,82,Met basic expectations.,3
+161,74,123,Pretty good overall.,4
+162,71,10,It works.,3
+163,80,26,Outstanding purchase!,5
+164,43,97,Outstanding purchase!,5
+165,11,75,Solid purchase.,4
+166,97,106,Absolutely love it!,5
+167,65,36,Average experience.,3
+168,32,22,Worth the money.,4
+169,16,29,Excellent product! Exactly as described.,5
+170,51,13,Absolutely love it!,5
+171,6,93,Satisfied with this item.,4
+172,45,99,"As expected, good value.",4
+173,63,64,Excellent product! Exactly as described.,5
+174,81,14,Fantastic quality!,5
+175,44,19,Absolutely love it!,5
