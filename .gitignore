@@ -7,3 +7,9 @@ logs/
 /data/data*
 /data/load_csv_to_db.py
 doc.md
+diagrams/
+
+# Hide Python and Jupyter files in data and diagrams folders
+data/*.py
+data/*.ipynb
+diagrams/

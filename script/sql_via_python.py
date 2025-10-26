@@ -27,7 +27,6 @@ class query_executor:
                 port=self.port
             )
             self.cur = self.conn.cursor()  
-            print('-- Connected to the database --')
             return self.conn
         except Exception as e:
             print(f'-- Connection error: {e} --') 
@@ -47,7 +46,6 @@ class query_executor:
             self.cur.close()
         if self.conn:
             self.conn.close()
-            print('-- Connection closed --')
 
 
 if __name__ == "__main__":

@@ -24,7 +24,16 @@ This project showcases end-to-end data engineering skills:
 - **Analytics**: Customer_Review, Seller_Review, Order_History
 - **Logistics**: Import_Distribution, Export_Distribution, Customer/Seller Service
 
-![ERD Diagram](image/conceptual%20diagram%20-%20Physical%20Model.png)
+![ERD Diagram](/result/image/conceptual%20diagram%20-%20Physical%20Model.png)
+
+## Project Diagrams
+
+Visual documentation of the system architecture and data flow:
+
+![Entity Relationship Diagram](result/image/core_flow.png)
+
+![Entity Relationship Diagram](result/image/detailed_core_flow.png)
+
 
 ##  Business Analytics Implemented
 

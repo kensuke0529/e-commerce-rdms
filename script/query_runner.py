@@ -2,6 +2,7 @@ import csv
 import os
 import pandas as pd
 from sql_via_python import query_executor
+import numpy as np
 
 class SQLAnalysisRunner:
     """Run SQL analysis files and display results."""
@@ -22,6 +23,7 @@ class SQLAnalysisRunner:
     
     def run_analysis_file(self, filename, csv_export=None, file_name=None):        
         queries = self.read_sql_file(filename)
+        all_results = []
         
         for i, query in enumerate(queries, 1):
             # Remove comment lines from the query block
@@ -32,9 +34,7 @@ class SQLAnalysisRunner:
             # Skip if nothing left after removing comments
             if not clean_query:
                 continue
-            
-            print(f"\n  Query {i}:")
-            
+                        
             # Execute query
             db = query_executor(clean_query)
             db.connect_to_db()
@@ -45,20 +45,56 @@ class SQLAnalysisRunner:
                 
                 # Convert to DataFrame with column names
                 df = pd.DataFrame(results, columns=columns)
-                print(df)
+                
+                # Add query description and results to collection
+                query_description = f"Query {i}: {lines[0].replace('--', '').strip() if lines and lines[0].strip().startswith('--') else f'Query {i}'}"
+                all_results.append({
+                    'description': query_description,
+                    'data': df
+                })
                 
                 if csv_export:
-                    df.to_csv(f'../result/{file_name}.csv')
-                    print('new csv file exported')
+                    df.to_csv(f'../result/{file_name}_query_{i}.csv')
+                    print(f'Query {i} results exported to CSV')
                     
             else:
-                print("No results returned\n")
+                print(f"Query {i}: No results returned\n")
             
             db.close()
+        
+        return all_results
+    
+    def run_single_query(self, query, description="Generated Query"):
+        """Run a single SQL query and return results."""
+        from sql_via_python import query_executor
+        
+        # Execute query
+        db = query_executor(query)
+        db.connect_to_db()
+        results = db.execute()
+        
+        all_results = []
+        
+        if results:
+            columns = [desc[0] for desc in db.cur.description]
+            
+            # Convert to DataFrame with column names
+            df = pd.DataFrame(results, columns=columns)
+            
+            # Add query description and results to collection
+            all_results.append({
+                'description': description,
+                'data': df
+            })
+        else:
+            print(f"Query: No results returned\n")
+        
+        db.close()
+        return all_results
 
 if __name__ == "__main__":
     runner = SQLAnalysisRunner()
     
-    runner.run_analysis_file("1.revenue_analysis.sql", csv_export=True, file_name='sql_query_result')
+    runner.run_analysis_file("1.revenue_analysis.sql")
     # runner.run_analysis_file("2.customer_analysis.sql")
     # runner.run_analysis_file("3.product_analysis.sql")
