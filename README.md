@@ -38,38 +38,7 @@ An end-to-end data engineering and AI-powered analytics platform for an eBay-lik
 
 #### Chatbot Tool-Call Flow
 
-```mermaid
-flowchart TD
-    U[User] --> C[Chatbot Entry]
-    C --> LLM[LLM with Tools (LangChain)]
-    LLM --> D{Any tool calls?}
-    D -- No --> A[Return final answer]
-    D -- Yes --> E[Execute tool call(s)]
-
-    subgraph Tools
-      T1[faq → call_functions("faq")] 
-      T2[get_my_orders → call_functions("get_my_orders")] 
-      T3[get_product_reviews → call_functions("get_product_reviews")] 
-      T4[query_policies_docs → call_functions("query_policies_docs")] 
-    end
-
-    E --> T1
-    E --> T2
-    E --> T3
-    E --> T4
-
-    T4 --> V[Embeddings + ChromaDB search]
-    T1 --> R[Tool Results]
-    T2 --> R
-    T3 --> R
-    V --> R
-
-    R --> M[Append ToolMessage to messages]
-    M --> LLM
-    LLM --> D
-
-    note right of LLM: Iterates up to max_attempts
-```
+![Chatbot Tool-Call Flow Diagram](result/image/chatbot_tool_call_flow.png)
 
 ### Business Analytics & Reporting
 
