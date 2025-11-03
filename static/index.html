@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDMS AI SQL Agent</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const LoginForm = ({ onLogin }) => {
+            const [credentials, setCredentials] = useState({ username: 'ken', password: 'test_pass' });
+            const [loading, setLoading] = useState(false);
+            const [error, setError] = useState('');
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setLoading(true);
+                setError('');
+
+                try {
+                    const formData = new FormData();
+                    formData.append('username', credentials.username);
+                    formData.append('password', credentials.password);
+
+                    const response = await fetch('/token', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        localStorage.setItem('token', data.access_token);
+                        onLogin(data.access_token);
+                    } else {
+                        setError('Invalid credentials');
+                    }
+                } catch (err) {
+                    setError('Login failed');
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-xl shadow-lg">
+                        <div>
+                            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                                RDMS AI Agent
+                            </h2>
+                            <p className="mt-2 text-center text-sm text-gray-600">
+                                Sign in to access the AI SQL analyst
+                            </p>
+                        </div>
+                        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Username
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        value={credentials.username}
+                                        onChange={(e) => setCredentials({...credentials, username: e.target.value})}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">
+                                        Password
+                                    </label>
+                                    <input
+                                        type="password"
+                                        required
+                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        value={credentials.password}
+                                        onChange={(e) => setCredentials({...credentials, password: e.target.value})}
+                                    />
+                                </div>
+                            </div>
+
+                            {error && (
+                                <div className="text-red-600 text-sm text-center">{error}</div>
+                            )}
+
+                            <div>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                                >
+                                    {loading ? 'Signing in...' : 'Sign in'}
+                                </button>
+                            </div>
+                            
+                            <div className="text-xs text-gray-500 text-center">
+                                Demo credentials: ken / test_pass
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const ChatInterface = ({ token, onLogout }) => {
+            const [messages, setMessages] = useState([]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [mode, setMode] = useState('sql'); // 'sql' or 'chatbot'
+            const messagesEndRef = useRef(null);
+
+            const scrollToBottom = () => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            };
+
+            useEffect(scrollToBottom, [messages]);
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                if (!input.trim() || loading) return;
+
+                const userMessage = { type: 'user', content: input, timestamp: new Date() };
+                setMessages(prev => [...prev, userMessage]);
+                const userInput = input;
+                setInput('');
+                setLoading(true);
+
+                try {
+                    console.log('Sending request with token:', token);
+                    const endpoint = mode === 'sql' ? '/analyze' : '/chat';
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ prompt: userInput })
+                    });
+
+                    console.log('Response status:', response.status);
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Add AI response message - handle different response formats
+                        const aiMessage = {
+                            type: 'ai',
+                            content: mode === 'sql' 
+                                ? (data.analysis || data.response || '')
+                                : (data.answer || ''),
+                            sqlQuery: mode === 'sql' ? data.sql_query : null,
+                            data: mode === 'sql' ? data.data : null,
+                            questionType: mode === 'sql' ? data.question_type : 'chatbot',
+                            timestamp: new Date()
+                        };
+                        
+                        setMessages(prev => [...prev, aiMessage]);
+                    } else if (response.status === 401) {
+                        // Handle authentication error
+                        setMessages(prev => [...prev, {
+                            type: 'error', 
+                            content: 'Authentication failed. Please login again.',
+                            timestamp: new Date()
+                        }]);
+                        // Clear token and redirect to login
+                        localStorage.removeItem('token');
+                        window.location.reload();
+                    } else {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error || `Failed to get response: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Add error message
+                    setMessages(prev => [...prev, {
+                        type: 'error', 
+                        content: `Sorry, I encountered an error: ${error.message}. Please try again.`,
+                        timestamp: new Date()
+                    }]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            const MessageBubble = ({ message }) => {
+                if (message.type === 'user') {
+                    return (
+                        <div className="flex justify-end mb-4">
+                            <div className="bg-blue-600 text-white rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
+                                {message.content}
+                            </div>
+                        </div>
+                    );
+                }
+
+                if (message.type === 'error') {
+                    return (
+                        <div className="flex justify-start mb-4">
+                            <div className="bg-red-100 text-red-800 rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
+                                {message.content}
+                            </div>
+                        </div>
+                    );
+                }
+
+                // Function to render markdown content
+                const renderMarkdown = (content) => {
+                    if (!content) return '';
+                    
+                    // Configure marked for better rendering
+                    marked.setOptions({
+                        breaks: true,
+                        gfm: true,
+                        sanitize: false
+                    });
+                    
+                    return marked.parse(content);
+                };
+
+                return (
+                    <div className="flex justify-start mb-4">
+                        <div className="bg-white border rounded-lg px-4 py-2 max-w-xs lg:max-w-2xl shadow-sm">
+                            <div className="text-sm text-gray-600 mb-2">
+                                {message.questionType === 'chatbot' ? '💬 Customer Support' : '🤖 SQL Analyst'}
+                            </div>
+                            <div 
+                                className="text-gray-800 prose prose-sm max-w-none"
+                                dangerouslySetInnerHTML={{ __html: renderMarkdown(message.content) }}
+                                style={{
+                                    '& h1': { fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '0.5rem' },
+                                    '& h2': { fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.5rem' },
+                                    '& h3': { fontSize: '1rem', fontWeight: 'bold', marginBottom: '0.5rem' },
+                                    '& p': { marginBottom: '0.5rem' },
+                                    '& ul': { marginLeft: '1rem', marginBottom: '0.5rem' },
+                                    '& ol': { marginLeft: '1rem', marginBottom: '0.5rem' },
+                                    '& li': { marginBottom: '0.25rem' },
+                                    '& strong': { fontWeight: 'bold' },
+                                    '& em': { fontStyle: 'italic' },
+                                    '& code': { 
+                                        backgroundColor: '#f3f4f6', 
+                                        padding: '0.125rem 0.25rem', 
+                                        borderRadius: '0.25rem',
+                                        fontSize: '0.875rem',
+                                        fontFamily: 'monospace'
+                                    },
+                                    '& pre': { 
+                                        backgroundColor: '#f3f4f6', 
+                                        padding: '0.5rem', 
+                                        borderRadius: '0.25rem',
+                                        overflow: 'auto',
+                                        marginBottom: '0.5rem'
+                                    },
+                                    '& blockquote': {
+                                        borderLeft: '4px solid #e5e7eb',
+                                        paddingLeft: '1rem',
+                                        marginLeft: '0',
+                                        fontStyle: 'italic',
+                                        color: '#6b7280'
+                                    }
+                                }}
+                            />
+                            
+                            {message.sqlQuery && (
+                                <div className="mt-3">
+                                    <div className="text-xs text-gray-500 mb-1">Generated SQL:</div>
+                                    <pre className="bg-gray-100 p-2 rounded text-xs overflow-x-auto">
+                                        <code className="language-sql">{message.sqlQuery}</code>
+                                    </pre>
+                                </div>
+                            )}
+                            
+                            {message.data && message.data.length > 0 && (
+                                <div className="mt-3">
+                                    <div className="text-xs text-gray-500 mb-1">Query Results:</div>
+                                    {message.data.map((result, idx) => (
+                                        <div key={idx} className="mb-2">
+                                            <div className="text-xs font-medium text-gray-600">
+                                                {result.description} ({result.row_count} rows)
+                                            </div>
+                                            <div className="bg-gray-50 p-2 rounded text-xs overflow-x-auto">
+                                                <pre>{JSON.stringify(result.data, null, 2)}</pre>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+            };
+
+            return (
+                <div className="min-h-screen bg-gray-50">
+                    <div className="bg-white shadow-sm border-b">
+                        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+                            <h1 className="text-xl font-semibold text-gray-900">
+                                RDMS AI Agent
+                            </h1>
+                            <div className="flex items-center space-x-4">
+                                <div className="flex bg-gray-100 rounded-lg p-1">
+                                    <button
+                                        onClick={() => {
+                                            setMode('sql');
+                                            setMessages([]);
+                                        }}
+                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            mode === 'sql'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'text-gray-700 hover:text-gray-900'
+                                        }`}
+                                    >
+                                        🤖 SQL Runner
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            setMode('chatbot');
+                                            setMessages([]);
+                                        }}
+                                        className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                                            mode === 'chatbot'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'text-gray-700 hover:text-gray-900'
+                                        }`}
+                                    >
+                                        💬 Chatbot
+                                    </button>
+                                </div>
+                                <button
+                                    onClick={onLogout}
+                                    className="text-sm text-gray-600 hover:text-gray-800"
+                                >
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="max-w-4xl mx-auto px-4 py-6">
+                        <div className="bg-white rounded-lg shadow-sm border h-96 overflow-y-auto p-4 mb-4">
+                            {messages.length === 0 ? (
+                                <div className="text-center text-gray-500 mt-20">
+                                    <div className="text-4xl mb-4">
+                                        {mode === 'sql' ? '🤖' : '💬'}
+                                    </div>
+                                    <h3 className="text-lg font-medium mb-2">
+                                        Welcome to RDMS AI {mode === 'sql' ? 'SQL Analyst' : 'Customer Support'}
+                                    </h3>
+                                    <p className="text-sm">
+                                        {mode === 'sql' 
+                                            ? 'Ask me questions about your e-commerce data! I can analyze sales, customers, products, and more.'
+                                            : 'Ask me about return policies, shipping information, FAQs, or product reviews. I can help you with customer service questions!'}
+                                    </p>
+                                    <div className="mt-4 text-xs text-gray-400">
+                                        {mode === 'sql' 
+                                            ? 'Try: "What are the top selling products?" or "Show me sales by category"'
+                                            : 'Try: "Can you find the return policy doc and summarize?" or "What is the shipping policy?"'}
+                                    </div>
+                                </div>
+                            ) : (
+                                messages.map((message, idx) => (
+                                    <MessageBubble key={idx} message={message} />
+                                ))
+                            )}
+                            
+                            {loading && (
+                                <div className="flex justify-start mb-4">
+                                    <div className="bg-white border rounded-lg px-4 py-2 shadow-sm">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                            <span className="text-sm text-gray-600">AI is thinking...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="flex space-x-2">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder={
+                                    mode === 'sql'
+                                        ? 'Ask me about your e-commerce data...'
+                                        : 'Ask me about policies, FAQs, or customer service...'
+                                }
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                disabled={loading}
+                            />
+                            <button
+                                type="submit"
+                                disabled={loading || !input.trim()}
+                                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Send
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [token, setToken] = useState(localStorage.getItem('token'));
+
+            const handleLogin = (newToken) => {
+                setToken(newToken);
+            };
+
+            const handleLogout = () => {
+                localStorage.removeItem('token');
+                setToken(null);
+            };
+
+            return (
+                <div>
+                    {token ? (
+                        <ChatInterface token={token} onLogout={handleLogout} />
+                    ) : (
+                        <LoginForm onLogin={handleLogin} />
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>

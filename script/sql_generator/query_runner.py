@@ -1,13 +1,18 @@
 import csv
 import os
 import pandas as pd
-from sql_via_python import query_executor
+from .sql_via_python import query_executor
 import numpy as np
 
 class SQLAnalysisRunner:
     """Run SQL analysis files and display results."""
     
-    def __init__(self, sql_directory="../sql"):
+    def __init__(self, sql_directory=None):
+        if sql_directory is None:
+            # Default to sql folder relative to project root
+            sql_directory = os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sql"
+            )
         self.sql_dir = sql_directory
     
     def read_sql_file(self, filename):
@@ -66,7 +71,6 @@ class SQLAnalysisRunner:
     
     def run_single_query(self, query, description="Generated Query"):
         """Run a single SQL query and return results."""
-        from sql_via_python import query_executor
         
         # Execute query
         db = query_executor(query)
