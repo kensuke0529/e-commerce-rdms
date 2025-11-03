@@ -19,6 +19,8 @@ An end-to-end data engineering and AI-powered analytics platform for an eBay-lik
 - Result validation to ensure queries answer the user's question
 - Comprehensive data analysis with AI-generated insights
 
+![System Architecture](result/image/core_flow.png)
+
 ### Customer Service Chatbot
 
 **Intelligent Customer Support System**
@@ -37,6 +39,8 @@ An end-to-end data engineering and AI-powered analytics platform for an eBay-lik
 - Provide personalized responses based on customer data
 
 #### Chatbot Tool-Call Flow
+
+User prompt -> Tool calls (RAG, SQL execute) -> Response 
 
 ![Chatbot Tool-Call Flow Diagram](result/image/chatbot_tool_call_flow.png)
 
@@ -117,12 +121,6 @@ An end-to-end data engineering and AI-powered analytics platform for an eBay-lik
 - Multi-step query generation and validation
 - Result analysis and insight generation
 
-![System Architecture](result/image/core_flow.png)
-
-![Detailed Architecture](result/image/detailed_core_flow.png)
-
-![SQL Agent Graph](result/image/sql_agent_graph_simplified.png)
-
 ## Tech Stack
 
 **Backend:**
@@ -132,4 +130,3 @@ An end-to-end data engineering and AI-powered analytics platform for an eBay-lik
 - **Vector Database**: ChromaDB
 - **API Framework**: FastAPI
 - **Authentication**: JWT (JSON Web Tokens)
-
