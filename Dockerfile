@@ -4,12 +4,16 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies including build tools for pygraphviz
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     graphviz \
     libgraphviz-dev \
     pkg-config \
+    build-essential \
+    gcc \
+    g++ \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
