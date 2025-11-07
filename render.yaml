@@ -2,10 +2,12 @@ services:
   # FastAPI Web Service using Docker (Free Tier)
   - type: web
     name: rdms-api
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
+    # Render auto-detects Docker when Dockerfile is present in root
+    # Alternative: Use Python runtime (simpler for Blueprint)
+    runtime: python
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: python -m uvicorn script.api:app --host 0.0.0.0 --port $PORT
     # No plan specified = Free tier (spins down after 15 min inactivity)
-    # Docker makes deployment easier and more consistent
     envVars:
       - key: SECRET_KEY
         generateValue: true
@@ -45,4 +47,3 @@ databases:
     user: rdms_user
     # Note: Free tier database is available for 90 days, then requires payment
     # Remove 'plan' to use free tier, or set plan: starter ($7/mo) for paid
-
