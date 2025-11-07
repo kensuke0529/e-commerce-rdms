@@ -1,9 +1,9 @@
 services:
-  # FastAPI Web Service
+  # FastAPI Web Service (Free Tier)
   - type: web
     name: rdms-api
     runtime: python
-    plan: starter  # Change to 'standard' or 'pro' for production
+    # No plan specified = Free tier (spins down after 15 min inactivity)
     buildCommand: pip install --upgrade pip && pip install -e .
     startCommand: python -m uvicorn script.api:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -41,9 +41,10 @@ services:
           property: password
 
 databases:
-  # PostgreSQL Database
+  # PostgreSQL Database (Free Tier - 90 day trial, then requires payment)
   - name: rdms-db
     databaseName: rdms
     user: rdms_user
-    plan: starter  # Change to 'standard' or 'pro' for production
+    # Note: Free tier database is available for 90 days, then requires payment
+    # Remove 'plan' to use free tier, or set plan: starter ($7/mo) for paid
 
