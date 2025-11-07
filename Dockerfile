@@ -4,16 +4,12 @@ FROM python:3.11-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies including build tools for pygraphviz
+# Install system dependencies
+# graphviz binary is needed for the graphviz Python package
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     graphviz \
-    libgraphviz-dev \
     pkg-config \
-    build-essential \
-    gcc \
-    g++ \
-    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip
@@ -23,6 +19,8 @@ RUN pip install --no-cache-dir --upgrade pip
 COPY pyproject.toml ./
 
 # Install dependencies from pyproject.toml
+# Note: pygraphviz removed - only used for diagram generation, not required for app
+# Using graphviz package instead (easier to install, no compilation needed)
 RUN pip install --no-cache-dir \
     pandas>=2.0.0 \
     psycopg2-binary>=2.9.0 \
@@ -37,7 +35,7 @@ RUN pip install --no-cache-dir \
     bcrypt>=4.0.0 \
     PyJWT>=2.8.0 \
     openai>=1.0.0 \
-    pygraphviz>=1.11 \
+    graphviz>=0.20.0 \
     langgraph>=0.2.30 \
     langchain-core>=0.3.13 \
     langchain-community>=0.3.0 \
