@@ -1,14 +1,12 @@
 services:
-  # FastAPI Web Service (Free Tier)
+  # FastAPI Web Service using Docker (Free Tier)
   - type: web
     name: rdms-api
-    runtime: python
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
     # No plan specified = Free tier (spins down after 15 min inactivity)
-    buildCommand: pip install --upgrade pip && pip install -e .
-    startCommand: python -m uvicorn script.api:app --host 0.0.0.0 --port $PORT
+    # Docker makes deployment easier and more consistent
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
       - key: SECRET_KEY
         generateValue: true
       - key: OPENAI_API_KEY
