@@ -269,5 +269,7 @@ def chat_endpoint(request: ChatRequest, current_user: str = Depends(get_current_
 
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run(app, host="0.0.0.0", port=8011)
+    
+    # Use PORT from environment (Render sets this) or default to 8011
+    port = int(os.getenv("PORT", 8011))
+    uvicorn.run(app, host="0.0.0.0", port=port)

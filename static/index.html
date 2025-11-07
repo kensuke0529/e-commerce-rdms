@@ -19,6 +19,44 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
+        // Token limit utilities
+        const TOKEN_LIMIT_PER_DAY = 5000;
+        const CHARS_PER_TOKEN = 4; // Rough estimate: 1 token ≈ 4 characters
+
+        const getTokenUsage = () => {
+            const today = new Date().toDateString();
+            const stored = localStorage.getItem('tokenUsage');
+            if (!stored) return { date: today, tokens: 0 };
+            
+            const usage = JSON.parse(stored);
+            if (usage.date !== today) {
+                // Reset if it's a new day
+                return { date: today, tokens: 0 };
+            }
+            return usage;
+        };
+
+        const saveTokenUsage = (tokens) => {
+            const today = new Date().toDateString();
+            localStorage.setItem('tokenUsage', JSON.stringify({ date: today, tokens }));
+        };
+
+        const estimateTokens = (text) => {
+            if (!text) return 0;
+            return Math.ceil(text.length / CHARS_PER_TOKEN);
+        };
+
+        const addTokenUsage = (prompt, response) => {
+            const promptTokens = estimateTokens(prompt);
+            const responseTokens = estimateTokens(response);
+            const totalTokens = promptTokens + responseTokens;
+            
+            const usage = getTokenUsage();
+            const newTotal = usage.tokens + totalTokens;
+            saveTokenUsage(newTotal);
+            return newTotal;
+        };
+
         const LoginForm = ({ onLogin }) => {
             const [credentials, setCredentials] = useState({ username: 'ken', password: 'test_pass' });
             const [loading, setLoading] = useState(false);
@@ -120,6 +158,7 @@
             const [input, setInput] = useState('');
             const [loading, setLoading] = useState(false);
             const [mode, setMode] = useState('sql'); // 'sql' or 'chatbot'
+            const [tokenUsage, setTokenUsage] = useState(getTokenUsage());
             const messagesEndRef = useRef(null);
 
             const scrollToBottom = () => {
@@ -128,9 +167,41 @@
 
             useEffect(scrollToBottom, [messages]);
 
+            useEffect(() => {
+                // Refresh token usage periodically
+                const interval = setInterval(() => {
+                    setTokenUsage(getTokenUsage());
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
             const handleSubmit = async (e) => {
                 e.preventDefault();
                 if (!input.trim() || loading) return;
+
+                // Check token limit before sending
+                const currentUsage = getTokenUsage();
+                
+                // Check if already at or over limit
+                if (currentUsage.tokens >= TOKEN_LIMIT_PER_DAY) {
+                    setMessages(prev => [...prev, {
+                        type: 'error',
+                        content: `Daily token limit reached! You've used ${currentUsage.tokens}/${TOKEN_LIMIT_PER_DAY} tokens today. Please try again tomorrow.`,
+                        timestamp: new Date()
+                    }]);
+                    return;
+                }
+                
+                // Check if this request would exceed limit
+                const estimatedPromptTokens = estimateTokens(input);
+                if (currentUsage.tokens + estimatedPromptTokens > TOKEN_LIMIT_PER_DAY) {
+                    setMessages(prev => [...prev, {
+                        type: 'error',
+                        content: `This request would exceed your daily token limit. You've used ${currentUsage.tokens}/${TOKEN_LIMIT_PER_DAY} tokens today. ${TOKEN_LIMIT_PER_DAY - currentUsage.tokens} tokens remaining.`,
+                        timestamp: new Date()
+                    }]);
+                    return;
+                }
 
                 const userMessage = { type: 'user', content: input, timestamp: new Date() };
                 setMessages(prev => [...prev, userMessage]);
@@ -155,11 +226,13 @@
                         const data = await response.json();
                         
                         // Add AI response message - handle different response formats
+                        const responseContent = mode === 'sql' 
+                            ? (data.analysis || data.response || '')
+                            : (data.answer || '');
+                        
                         const aiMessage = {
                             type: 'ai',
-                            content: mode === 'sql' 
-                                ? (data.analysis || data.response || '')
-                                : (data.answer || ''),
+                            content: responseContent,
                             sqlQuery: mode === 'sql' ? data.sql_query : null,
                             data: mode === 'sql' ? data.data : null,
                             questionType: mode === 'sql' ? data.question_type : 'chatbot',
@@ -167,6 +240,17 @@
                         };
                         
                         setMessages(prev => [...prev, aiMessage]);
+                        
+                        // Update token usage (include SQL query and data if present)
+                        let fullResponse = responseContent;
+                        if (data.sql_query) {
+                            fullResponse += '\n' + data.sql_query;
+                        }
+                        if (data.data && Array.isArray(data.data)) {
+                            fullResponse += '\n' + JSON.stringify(data.data);
+                        }
+                        const newTotal = addTokenUsage(userInput, fullResponse);
+                        setTokenUsage({ date: new Date().toDateString(), tokens: newTotal });
                     } else if (response.status === 401) {
                         // Handle authentication error
                         setMessages(prev => [...prev, {
@@ -309,6 +393,42 @@
                                 RDMS AI Agent
                             </h1>
                             <div className="flex items-center space-x-4">
+                                {/* Token Usage Indicator */}
+                                <div className="flex items-center space-x-2 bg-gray-50 rounded-lg px-3 py-2 border border-gray-200">
+                                    <div className="flex flex-col items-end">
+                                        <div className="text-xs text-gray-600 font-medium">
+                                            Daily Tokens
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <span className={`text-sm font-semibold ${
+                                                tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY 
+                                                    ? 'text-red-600' 
+                                                    : tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY * 0.8 
+                                                    ? 'text-orange-600' 
+                                                    : 'text-gray-700'
+                                            }`}>
+                                                {tokenUsage.tokens.toLocaleString()}
+                                            </span>
+                                            <span className="text-xs text-gray-500">
+                                                / {TOKEN_LIMIT_PER_DAY.toLocaleString()}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                        <div 
+                                            className={`h-full transition-all duration-300 ${
+                                                tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY 
+                                                    ? 'bg-red-500' 
+                                                    : tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY * 0.8 
+                                                    ? 'bg-orange-500' 
+                                                    : 'bg-blue-500'
+                                            }`}
+                                            style={{ 
+                                                width: `${Math.min((tokenUsage.tokens / TOKEN_LIMIT_PER_DAY) * 100, 100)}%` 
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                                 <div className="flex bg-gray-100 rounded-lg p-1">
                                     <button
                                         onClick={() => {
@@ -388,22 +508,45 @@
                             <div ref={messagesEndRef} />
                         </div>
 
+                        {tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY * 0.8 && tokenUsage.tokens < TOKEN_LIMIT_PER_DAY && (
+                            <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-orange-600">⚠️</span>
+                                    <span className="text-sm text-orange-800">
+                                        You're approaching your daily token limit ({Math.round((tokenUsage.tokens / TOKEN_LIMIT_PER_DAY) * 100)}% used). 
+                                        {TOKEN_LIMIT_PER_DAY - tokenUsage.tokens} tokens remaining.
+                                    </span>
+                                </div>
+                            </div>
+                        )}
+                        {tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                                <div className="flex items-center space-x-2">
+                                    <span className="text-red-600">🚫</span>
+                                    <span className="text-sm text-red-800">
+                                        Daily token limit reached! Your limit will reset tomorrow.
+                                    </span>
+                                </div>
+                            </div>
+                        )}
                         <form onSubmit={handleSubmit} className="flex space-x-2">
                             <input
                                 type="text"
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 placeholder={
-                                    mode === 'sql'
+                                    tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY
+                                        ? 'Daily token limit reached. Please try again tomorrow.'
+                                        : mode === 'sql'
                                         ? 'Ask me about your e-commerce data...'
                                         : 'Ask me about policies, FAQs, or customer service...'
                                 }
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                disabled={loading}
+                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                disabled={loading || tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY}
                             />
                             <button
                                 type="submit"
-                                disabled={loading || !input.trim()}
+                                disabled={loading || !input.trim() || tokenUsage.tokens >= TOKEN_LIMIT_PER_DAY}
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Send

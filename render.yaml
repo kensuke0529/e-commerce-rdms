@@ -1,0 +1,49 @@
+services:
+  # FastAPI Web Service
+  - type: web
+    name: rdms-api
+    runtime: python
+    plan: starter  # Change to 'standard' or 'pro' for production
+    buildCommand: pip install --upgrade pip && pip install -e .
+    startCommand: python -m uvicorn script.api:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: OPENAI_API_KEY
+        sync: false  # Set this in Render dashboard
+      - key: LANGCHAIN_TRACING_V2
+        value: "true"
+      - key: LANGCHAIN_API_KEY
+        sync: false  # Optional: Set in Render dashboard
+      - key: LANGCHAIN_PROJECT
+        value: rdms
+      - key: DB_HOST
+        fromDatabase:
+          name: rdms-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: rdms-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: rdms-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: rdms-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: rdms-db
+          property: password
+
+databases:
+  # PostgreSQL Database
+  - name: rdms-db
+    databaseName: rdms
+    user: rdms_user
+    plan: starter  # Change to 'standard' or 'pro' for production
+
