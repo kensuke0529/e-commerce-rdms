@@ -7,7 +7,6 @@ import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
-import sys
 from pathlib import Path
 from .query_runner import SQLAnalysisRunner
 from .ai_helpers import (
@@ -19,8 +18,7 @@ from .ai_helpers import (
 )
 
 # Import LangSmith configuration to enable tracing
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from langsmith_config import setup_langsmith
+from ..langsmith_config import setup_langsmith
 
 load_dotenv()
 setup_langsmith()

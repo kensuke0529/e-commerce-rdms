@@ -15,12 +15,12 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 
 # Enable LangSmith tracing for LangChain components
-from langsmith_config import setup_langsmith
+from .langsmith_config import setup_langsmith
 
-from sql_generator.ai_sql import AISQLRunner
-from sql_generator.graph import run_sql_agent
-from sql_generator.ai_helpers import format_results_for_api
-from chatbot.customer_chatbot import chatbot
+from .sql_generator.ai_sql import AISQLRunner
+from .sql_generator.graph import run_sql_agent
+from .sql_generator.ai_helpers import format_results_for_api
+from .chatbot.customer_chatbot import chatbot
 
 # Initialize LangSmith tracing
 setup_langsmith()

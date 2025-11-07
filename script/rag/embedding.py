@@ -7,10 +7,7 @@ import chromadb
 from pathlib import Path
 
 # Import LangSmith configuration to enable tracing
-import sys
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from langsmith_config import setup_langsmith
+from ..langsmith_config import setup_langsmith
 
 load_dotenv()
 setup_langsmith()

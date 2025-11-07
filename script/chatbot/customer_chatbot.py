@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 import json
-import sys
 from pathlib import Path
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
@@ -9,10 +8,9 @@ from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langchain_core.tools import StructuredTool
 
 # Import LangSmith configuration to enable tracing
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from langsmith_config import setup_langsmith
+from ..langsmith_config import setup_langsmith
 
-from script.chatbot.tools import call_functions
+from .tools import call_functions
 
 load_dotenv()
 setup_langsmith()
