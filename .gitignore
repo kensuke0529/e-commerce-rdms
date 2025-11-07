@@ -1,18 +1,129 @@
+# ============================================
+# Environment & Secrets
+# ============================================
 .env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+credentials/
+
+# ============================================
+# Python
+# ============================================
 __pycache__/
-*.pyc
-.DS_Store
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
 .venv/
 venv/
+ENV/
 env/
-results/
-logs/
-/data/data*
-/data/load_csv_to_db.py
-doc.md
-diagrams/
+.conda/
 
-# Hide Python and Jupyter files in data and diagrams folders
-data/*.py
-data/*.ipynb
-diagrams/
+# ============================================
+# IDE & Editor Files
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.code-workspace
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# Database & Cache Files
+# ============================================
+*.sqlite3
+*.db
+*.sqlite
+result/chroma_db/
+*.cache
+
+# ============================================
+# Generated Results & Reports
+# ============================================
+# Ignore generated data files, but keep documentation
+result/*.csv
+result/*.xlsx
+result/*.xls
+result/data_validation_report.txt
+result/sql_query_result.csv
+result/chroma_db/
+results/
+*.log
+logs/
+
+# ============================================
+# Data Files (keep structure, ignore generated)
+# ============================================
+/data/*.py
+/data/*.ipynb
+/data/*.tmp
+
+# ============================================
+# Temporary & Build Files
+# ============================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============================================
+# Documentation (optional - uncomment if needed)
+# ============================================
+# diagrams/
+# doc.md
+
+# ============================================
+# Lock Files (optional - uncomment to ignore)
+# ============================================
+# uv.lock
+# poetry.lock
+# Pipfile.lock

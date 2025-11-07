@@ -18,7 +18,7 @@ class DataValRunner:
 
     def read_sql_file(self, filename):
         """Read SQL file and extract queries."""
-        filepath = f"../data_val_sql_files/{filename}.sql"
+        filepath = f"../sql/validation/{filename}.sql"
 
         with open(filepath, "r") as f:
             content = f.read()
