@@ -34,19 +34,27 @@ class AISQLRunner:
 
     def __init__(self):
         """Initialize the AI SQL runner."""
+        # Check for required environment variables
+        openai_key = os.environ.get("OPENAI_API_KEY")
+        if not openai_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set. Please set it in your environment or Render dashboard.")
+        
         self.sql_runner = SQLAnalysisRunner()
         self.sql_results = None
         # Use LangChain ChatOpenAI for tracing
-        self.llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0.7,
-            openai_api_key=os.environ.get("OPENAI_API_KEY")
-        )
-        self.analysis_llm = ChatOpenAI(
-            model="gpt-4o-mini",
-            temperature=0.7,
-            openai_api_key=os.environ.get("OPENAI_API_KEY")
-        )
+        try:
+            self.llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                temperature=0.7,
+                openai_api_key=openai_key
+            )
+            self.analysis_llm = ChatOpenAI(
+                model="gpt-4o-mini",
+                temperature=0.7,
+                openai_api_key=openai_key
+            )
+        except Exception as e:
+            raise ValueError(f"Failed to initialize OpenAI client: {str(e)}. Please check your OPENAI_API_KEY.")
         # Use LangChain messages instead of dict format
         self.chat_history = [
             SystemMessage(

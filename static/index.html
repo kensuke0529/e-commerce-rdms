@@ -153,20 +153,32 @@
                     console.log('Response status:', response.status);
                     if (response.ok) {
                         const data = await response.json();
+                        console.log('Response data:', data);
                         
-                        // Add AI response message - handle different response formats
-                        const aiMessage = {
-                            type: 'ai',
-                            content: mode === 'sql' 
-                                ? (data.analysis || data.response || '')
-                                : (data.answer || ''),
-                            sqlQuery: mode === 'sql' ? data.sql_query : null,
-                            data: mode === 'sql' ? data.data : null,
-                            questionType: mode === 'sql' ? data.question_type : 'chatbot',
-                            timestamp: new Date()
-                        };
-                        
-                        setMessages(prev => [...prev, aiMessage]);
+                        // Check if the response indicates an error
+                        if (data.status === 'error') {
+                            // Handle error response from API
+                            setMessages(prev => [...prev, {
+                                type: 'error',
+                                content: data.message || data.error || 'An error occurred while processing your request',
+                                sqlQuery: mode === 'sql' ? data.sql_query : null,
+                                timestamp: new Date()
+                            }]);
+                        } else {
+                            // Add AI response message - handle different response formats
+                            const aiMessage = {
+                                type: 'ai',
+                                content: mode === 'sql' 
+                                    ? (data.analysis || data.response || data.message || 'No response generated')
+                                    : (data.answer || data.message || 'No response generated'),
+                                sqlQuery: mode === 'sql' ? data.sql_query : null,
+                                data: mode === 'sql' ? data.data : null,
+                                questionType: mode === 'sql' ? data.question_type : 'chatbot',
+                                timestamp: new Date()
+                            };
+                            
+                            setMessages(prev => [...prev, aiMessage]);
+                        }
                     } else if (response.status === 401) {
                         // Handle authentication error
                         setMessages(prev => [...prev, {

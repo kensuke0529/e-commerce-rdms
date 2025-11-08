@@ -143,7 +143,22 @@ app.add_middleware(
 static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-ai_runner = AISQLRunner()
+# Initialize AI runner lazily (like chatbot) - will be created on first use
+_ai_runner = None
+
+def get_ai_runner():
+    """Get or create AISQLRunner instance (lazy initialization like chatbot)."""
+    global _ai_runner
+    if _ai_runner is None:
+        try:
+            _ai_runner = AISQLRunner()
+            print("✓ AISQLRunner initialized successfully")
+        except Exception as e:
+            print(f"✗ Failed to initialize AISQLRunner: {e}")
+            import traceback
+            traceback.print_exc()
+            raise  # Re-raise so the endpoint can handle it
+    return _ai_runner
 
 
 # Endpoints
@@ -165,6 +180,18 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
     """Process a natural language query and return SQL analysis results."""
     question_type = None
     try:
+        # Get AI runner (lazy initialization, like chatbot)
+        try:
+            ai_runner = get_ai_runner()
+        except Exception as e:
+            return QueryResponse(
+                status="error",
+                question_type="sql",
+                prompt=request.prompt,
+                error="AI SQL Runner initialization failed",
+                message=f"Failed to initialize AI SQL Runner: {str(e)}. Please check server logs and ensure all environment variables (OPENAI_API_KEY, DB_*) are set correctly.",
+            )
+        
         # Try to classify the prompt
         try:
             question_type = ai_runner.classification_prompt(request.prompt)
@@ -238,13 +265,28 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         # Ensure question_type is set even in error cases
         # If it was SQL-related, preserve that, otherwise assume SQL (safer default)
         error_question_type = question_type if question_type else "sql"
+        
+        # Log the full error for debugging (like chatbot does)
+        import traceback
+        error_trace = traceback.format_exc()
+        print(f"Error in analyze_query: {str(e)}")
+        print(f"Traceback: {error_trace}")
+
+        # Return user-friendly error message (consistent with chatbot pattern)
+        error_message = str(e)
+        if "database" in error_message.lower() or "connection" in error_message.lower():
+            user_message = "Database connection error. Please check that the database is running and accessible."
+        elif "openai" in error_message.lower() or "api key" in error_message.lower():
+            user_message = "OpenAI API error. Please check your API key and ensure you have available credits."
+        else:
+            user_message = f"An error occurred while processing your request: {error_message}"
 
         return QueryResponse(
             status="error",
             question_type=error_question_type,
             prompt=request.prompt,
-            error=str(e),
-            message="An error occurred while processing your request",
+            error=error_message,
+            message=user_message,
         )
 
 
@@ -252,6 +294,48 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
 def health_check():
     """Health check endpoint."""
     return HealthResponse(status="healthy", message="API is running")
+
+
+@app.get("/diagnostics", tags=["Health"])
+def diagnostics():
+    """Diagnostic endpoint to check configuration and connections."""
+    diagnostics_info = {
+        "api_status": "running",
+        "environment_variables": {
+            "DB_HOST": "✓" if os.getenv("DB_HOST") else "✗ Missing",
+            "DB_PORT": os.getenv("DB_PORT", "✗ Missing"),
+            "DB_NAME": "✓" if os.getenv("DB_NAME") else "✗ Missing",
+            "DB_USER": "✓" if os.getenv("DB_USER") else "✗ Missing",
+            "DB_PASSWORD": "✓" if os.getenv("DB_PASSWORD") else "✗ Missing",
+            "OPENAI_API_KEY": "✓" if os.getenv("OPENAI_API_KEY") else "✗ Missing",
+            "SECRET_KEY": "✓" if os.getenv("SECRET_KEY") else "⚠ Using default",
+        },
+        "database_connection": "unknown",
+        "openai_connection": "unknown",
+    }
+    
+    # Test database connection
+    try:
+        from sql_generator.sql_via_python import query_executor
+        test_query = query_executor("SELECT 1")
+        test_query.connect_to_db()
+        test_query.cur.close()
+        test_query.conn.close()
+        diagnostics_info["database_connection"] = "✓ Connected"
+    except Exception as e:
+        diagnostics_info["database_connection"] = f"✗ Error: {str(e)}"
+    
+    # Test OpenAI connection (just check if key is valid format)
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if openai_key:
+        if openai_key.startswith("sk-") and len(openai_key) > 20:
+            diagnostics_info["openai_connection"] = "✓ Key format valid"
+        else:
+            diagnostics_info["openai_connection"] = "⚠ Key format may be invalid"
+    else:
+        diagnostics_info["openai_connection"] = "✗ No key provided"
+    
+    return diagnostics_info
 
 
 @app.get("/profile", response_model=ProfileResponse, tags=["User"])
