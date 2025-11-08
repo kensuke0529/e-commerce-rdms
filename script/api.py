@@ -194,6 +194,7 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         if not final_response:
             # Error case - SQL execution failed
             error_message = result.get("error_message", "Unknown error")
+            print(f"SQL Agent error: {error_message}")
             return QueryResponse(
                 status="error",
                 question_type="sql",
@@ -202,6 +203,10 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
                 message=error_message,
                 sql_query=sql_query,
             )
+
+        # Ensure we have a response (fallback if empty)
+        if not final_response or final_response.strip() == "":
+            final_response = "Query executed successfully, but no analysis was generated."
 
         # Success case - format data for API
         formatted_data = None
