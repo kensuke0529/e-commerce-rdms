@@ -140,10 +140,57 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
+# Find static directory - works in both localhost and Render
+# Try multiple possible paths
+possible_static_paths = [
+    os.path.join(os.path.dirname(__file__), "..", "static"),
+    os.path.join(os.path.dirname(__file__), "..", "..", "static"),
+    os.path.join(os.getcwd(), "static"),
+    os.path.join("/app", "static"),  # Docker/Render path
+]
+
+static_dir = None
+for path in possible_static_paths:
+    if os.path.exists(path) and os.path.isdir(path):
+        static_dir = path
+        break
+
+if static_dir:
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+    print(f"Static files mounted from: {static_dir}")
+else:
+    print(f"Warning: Static directory not found. Tried: {possible_static_paths}")
+
+# Initialize AI runner with logging
+print("=" * 60)
+print("Initializing RDMS AI SQL Agent")
+print("=" * 60)
+print(f"Current working directory: {os.getcwd()}")
+print(f"Script directory: {os.path.dirname(__file__)}")
+print(f"Python path: {os.environ.get('PYTHONPATH', 'Not set')}")
+
+# Check critical directories
+critical_dirs = ["static", "sql", "data", "documents"]
+for dir_name in critical_dirs:
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), "..", dir_name),
+        os.path.join(os.getcwd(), dir_name),
+        os.path.join("/app", dir_name),
+    ]
+    found = False
+    for path in possible_paths:
+        if os.path.exists(path):
+            print(f"✓ {dir_name} directory found at: {path}")
+            found = True
+            break
+    if not found:
+        print(f"⚠ {dir_name} directory not found. Tried: {possible_paths}")
+
+print("=" * 60)
 
 ai_runner = AISQLRunner()
+print("✓ AI Runner initialized")
+print("=" * 60)
 
 
 # Endpoints
@@ -227,20 +274,44 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         # Ensure question_type is set even in error cases
         # If it was SQL-related, preserve that, otherwise assume SQL (safer default)
         error_question_type = question_type if question_type else "sql"
+        
+        # Provide more detailed error messages
+        error_str = str(e)
+        if "connection" in error_str.lower() or "database" in error_str.lower():
+            error_message = f"Database connection error: {error_str}. Please check database configuration."
+        elif "OPENAI_API_KEY" in error_str or "openai" in error_str.lower():
+            error_message = f"OpenAI API error: {error_str}. Please check API key configuration."
+        else:
+            error_message = f"An error occurred while processing your request: {error_str}"
+
+        print(f"API Error: {error_message}")
+        import traceback
+        traceback.print_exc()
 
         return QueryResponse(
             status="error",
             question_type=error_question_type,
             prompt=request.prompt,
-            error=str(e),
-            message="An error occurred while processing your request",
+            error=error_str,
+            message=error_message,
         )
 
 
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
 def health_check():
-    """Health check endpoint."""
-    return HealthResponse(status="healthy", message="API is running")
+    """Health check endpoint with database connectivity test."""
+    try:
+        # Test database connection
+        from .sql_generator.sql_via_python import query_executor
+        test_db = query_executor("SELECT 1")
+        test_db.connect_to_db()
+        test_db.close()
+        return HealthResponse(status="healthy", message="API is running and database is connected")
+    except Exception as e:
+        return HealthResponse(
+            status="degraded", 
+            message=f"API is running but database connection failed: {str(e)}"
+        )
 
 
 @app.get("/profile", response_model=ProfileResponse, tags=["User"])
@@ -252,8 +323,22 @@ async def read_profile(username: str = Depends(get_current_user)):
 @app.get("/", tags=["Frontend"])
 async def read_root():
     """Serve the frontend interface."""
-    return FileResponse(
-        os.path.join(os.path.dirname(__file__), "..", "static", "index.html")
+    # Find index.html - works in both localhost and Render
+    possible_index_paths = [
+        os.path.join(os.path.dirname(__file__), "..", "static", "index.html"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "static", "index.html"),
+        os.path.join(os.getcwd(), "static", "index.html"),
+        os.path.join("/app", "static", "index.html"),  # Docker/Render path
+    ]
+    
+    for path in possible_index_paths:
+        if os.path.exists(path):
+            return FileResponse(path)
+    
+    # Fallback: return error if not found
+    raise HTTPException(
+        status_code=404,
+        detail=f"index.html not found. Tried paths: {possible_index_paths}"
     )
 
 

@@ -29,6 +29,7 @@ services:
     ports:
       - "8011:8011"
     environment:
+      PORT: 8011
       DB_HOST: db
       DB_PORT: 5432
       DB_NAME: ${DB_NAME:-rdms}

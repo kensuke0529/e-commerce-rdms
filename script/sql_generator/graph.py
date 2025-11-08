@@ -72,15 +72,41 @@ def execute_sql_node(state: GraphState, config: RunnableConfig) -> dict:
                 "error_type": "no_data",
                 "error_message": "Query executed but returned no results",
             }
+        
+        # Check if results contain error messages (string data indicates error)
+        has_error = False
+        error_messages = []
+        for result in results:
+            if isinstance(result.get("data"), str) and ("error" in result.get("data", "").lower() or "failed" in result.get("data", "").lower()):
+                has_error = True
+                error_messages.append(result.get("data", "Unknown error"))
+        
+        if has_error:
+            error_msg = "; ".join(error_messages)
+            print(f"  Execution returned errors: {error_msg}")
+            return {
+                "sql_results": results,
+                "error_type": "execution_error",
+                "error_message": error_msg,
+            }
 
         return {"sql_results": results, "error_type": None, "error_message": None}
 
-    except Exception as e:
-        print(f"  Execution failed: {str(e)}")
+    except ConnectionError as e:
+        error_msg = f"Database connection failed: {str(e)}"
+        print(f"  {error_msg}")
         return {
             "sql_results": None,
             "error_type": "execution_error",
-            "error_message": str(e),
+            "error_message": error_msg,
+        }
+    except Exception as e:
+        error_msg = f"SQL execution failed: {str(e)}"
+        print(f"  {error_msg}")
+        return {
+            "sql_results": None,
+            "error_type": "execution_error",
+            "error_message": error_msg,
         }
 
 

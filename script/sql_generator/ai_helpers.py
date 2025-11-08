@@ -76,13 +76,33 @@ def generate_sql_query(prompt: str) -> str:
         SQL query string
     """
     # Read schema information
-    schema_path = os.path.join(
-        os.path.dirname(os.path.dirname(__file__)), "..", "sql", "0.tables.sql"
-    )
+    # Try multiple possible paths for schema file (works in both dev and production)
+    possible_paths = [
+        os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "sql", "0.tables.sql"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "sql", "0.tables.sql"),
+        os.path.join(os.getcwd(), "sql", "0.tables.sql"),  # Current working directory
+        os.path.join("/app", "sql", "0.tables.sql"),  # Docker/Render path
+        # Also try relative to script directory
+        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sql", "0.tables.sql"),
+    ]
+    
     schema_info = ""
-    if os.path.exists(schema_path):
-        with open(schema_path, "r") as f:
-            schema_info = f.read()
+    schema_path = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            schema_path = path
+            print(f"Schema file found at: {schema_path}")
+            break
+    
+    if schema_path:
+        try:
+            with open(schema_path, "r") as f:
+                schema_info = f.read()
+        except Exception as e:
+            print(f"Warning: Could not read schema file at {schema_path}: {e}")
+    else:
+        print(f"Warning: Schema file not found. Tried paths: {possible_paths}")
+        # This is critical for SQL generation, so we'll continue but SQL quality may suffer
 
     sql_generation_prompt = f"""
 You are a PostgreSQL query optimization expert. Generate a correct, efficient SQL query.

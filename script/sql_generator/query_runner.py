@@ -8,10 +8,27 @@ class SQLAnalysisRunner:
 
     def __init__(self, sql_directory=None):
         if sql_directory is None:
-            # Default to sql folder relative to project root
-            sql_directory = os.path.join(
-                os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sql"
-            )
+            # Try multiple possible paths for sql directory (works in both localhost and Render)
+            possible_sql_paths = [
+                os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sql"),
+                os.path.join(os.path.dirname(__file__), "..", "..", "sql"),
+                os.path.join(os.getcwd(), "sql"),
+                os.path.join("/app", "sql"),  # Docker/Render path
+            ]
+            
+            sql_directory = None
+            for path in possible_sql_paths:
+                if os.path.exists(path) and os.path.isdir(path):
+                    sql_directory = path
+                    break
+            
+            if not sql_directory:
+                # Fallback to first path if none found (will error later if file doesn't exist)
+                sql_directory = possible_sql_paths[0]
+                print(f"Warning: SQL directory not found. Using: {sql_directory}")
+            else:
+                print(f"SQL directory found at: {sql_directory}")
+        
         self.sql_dir = sql_directory
 
     def read_sql_file(self, filename):
@@ -82,38 +99,53 @@ class SQLAnalysisRunner:
 
     def run_single_query(self, query, description="Generated Query"):
         """Run a single SQL query and return results."""
+        db = None
+        try:
+            # Execute query
+            db = query_executor(query)
+            db.connect_to_db()
+            results = db.execute()
 
-        # Execute query
-        db = query_executor(query)
-        db.connect_to_db()
-        results = db.execute()
+            all_results = []
 
-        all_results = []
+            if results is None:
+                # Actual execution error
+                all_results.append({"description": description, "data": "Execution error"})
+                print("Query: Execution error\n")
+            else:
+                # Valid result (empty or with data)
+                columns = (
+                    [desc[0] for desc in db.cur.description] if db.cur.description else []
+                )
 
-        if results is None:
-            # Actual execution error
-            all_results.append({"description": description, "data": "Execution error"})
-            print("Query: Execution error\n")
-        else:
-            # Valid result (empty or with data)
-            columns = (
-                [desc[0] for desc in db.cur.description] if db.cur.description else []
-            )
+                # Convert to DataFrame with column names (handles empty results)
+                df = (
+                    pd.DataFrame(results, columns=columns)
+                    if columns
+                    else pd.DataFrame(results)
+                )
 
-            # Convert to DataFrame with column names (handles empty results)
-            df = (
-                pd.DataFrame(results, columns=columns)
-                if columns
-                else pd.DataFrame(results)
-            )
+                all_results.append({"description": description, "data": df})
 
-            all_results.append({"description": description, "data": df})
+                if len(results) == 0:
+                    print("Query: No results returned (empty result set)\n")
 
-            if len(results) == 0:
-                print("Query: No results returned (empty result set)\n")
-
-        db.close()
-        return all_results
+            return all_results
+        except ConnectionError as e:
+            error_msg = f"Database connection failed: {str(e)}"
+            print(f"Query: {error_msg}\n")
+            return [{"description": description, "data": error_msg}]
+        except RuntimeError as e:
+            error_msg = f"SQL execution failed: {str(e)}"
+            print(f"Query: {error_msg}\n")
+            return [{"description": description, "data": error_msg}]
+        except Exception as e:
+            error_msg = f"Unexpected error: {str(e)}"
+            print(f"Query: {error_msg}\n")
+            return [{"description": description, "data": error_msg}]
+        finally:
+            if db:
+                db.close()
 
 
 if __name__ == "__main__":

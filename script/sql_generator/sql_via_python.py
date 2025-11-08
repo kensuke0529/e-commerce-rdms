@@ -19,6 +19,18 @@ class query_executor:
         
     def connect_to_db(self):
         try: 
+            # Validate environment variables
+            if not all([self.host, self.port, self.database, self.user, self.password]):
+                missing = []
+                if not self.host: missing.append("DB_HOST")
+                if not self.port: missing.append("DB_PORT")
+                if not self.database: missing.append("DB_NAME")
+                if not self.user: missing.append("DB_USER")
+                if not self.password: missing.append("DB_PASSWORD")
+                error_msg = f"Missing database environment variables: {', '.join(missing)}"
+                print(f'-- Connection error: {error_msg} --')
+                raise ValueError(error_msg)
+            
             self.conn = psycopg2.connect(
                 database=self.database,
                 user=self.user,
@@ -28,18 +40,30 @@ class query_executor:
             )
             self.cur = self.conn.cursor()  
             return self.conn
+        except psycopg2.Error as e:
+            error_msg = f"PostgreSQL connection error: {str(e)}"
+            print(f'-- Connection error: {error_msg} --')
+            raise ConnectionError(error_msg) from e
         except Exception as e:
-            print(f'-- Connection error: {e} --') 
-            return None
+            error_msg = f"Database connection error: {str(e)}"
+            print(f'-- Connection error: {error_msg} --')
+            raise ConnectionError(error_msg) from e
         
     def execute(self):
+        if not self.cur:
+            raise RuntimeError("Database cursor not initialized. Call connect_to_db() first.")
         try:
             self.cur.execute(self.query)
             return self.cur.fetchall()
         
+        except psycopg2.Error as e:
+            error_msg = f"SQL execution error: {str(e)}"
+            print(f'-- Error executing query: {error_msg} --')
+            raise RuntimeError(error_msg) from e
         except Exception as e:
-            print(f'-- Error executing query: {e} --')
-            return None
+            error_msg = f"Query execution error: {str(e)}"
+            print(f'-- Error executing query: {error_msg} --')
+            raise RuntimeError(error_msg) from e
         
     def close(self):
         if self.cur:
