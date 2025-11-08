@@ -1,5 +1,5 @@
 import os
-from .sql_generator.sql_via_python import query_executor
+from sql_generator.sql_via_python import query_executor
 import pandas as pd
 from datetime import datetime
 import sys

@@ -8,9 +8,12 @@ from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
 import pandas as pd
+import sys
+from pathlib import Path
 
 # Import LangSmith configuration to enable tracing
-from ..langsmith_config import setup_langsmith
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from langsmith_config import setup_langsmith
 
 load_dotenv()
 setup_langsmith()
@@ -76,33 +79,13 @@ def generate_sql_query(prompt: str) -> str:
         SQL query string
     """
     # Read schema information
-    # Try multiple possible paths for schema file (works in both dev and production)
-    possible_paths = [
-        os.path.join(os.path.dirname(os.path.dirname(__file__)), "..", "sql", "0.tables.sql"),
-        os.path.join(os.path.dirname(__file__), "..", "..", "sql", "0.tables.sql"),
-        os.path.join(os.getcwd(), "sql", "0.tables.sql"),  # Current working directory
-        os.path.join("/app", "sql", "0.tables.sql"),  # Docker/Render path
-        # Also try relative to script directory
-        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "sql", "0.tables.sql"),
-    ]
-    
+    schema_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), "..", "sql", "0.tables.sql"
+    )
     schema_info = ""
-    schema_path = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            schema_path = path
-            print(f"Schema file found at: {schema_path}")
-            break
-    
-    if schema_path:
-        try:
-            with open(schema_path, "r") as f:
-                schema_info = f.read()
-        except Exception as e:
-            print(f"Warning: Could not read schema file at {schema_path}: {e}")
-    else:
-        print(f"Warning: Schema file not found. Tried paths: {possible_paths}")
-        # This is critical for SQL generation, so we'll continue but SQL quality may suffer
+    if os.path.exists(schema_path):
+        with open(schema_path, "r") as f:
+            schema_info = f.read()
 
     sql_generation_prompt = f"""
 You are a PostgreSQL query optimization expert. Generate a correct, efficient SQL query.
@@ -183,25 +166,6 @@ CORE PRINCIPLES:
     - Moving averages: AVG() OVER (ROWS BETWEEN ...)
     - Cohort analysis: First event + subsequent events over time periods
 
-11. MULTI-PART QUESTIONS
-    - If the question asks for multiple things (e.g., "top state, top customer, and top item"), use CTEs or UNION ALL to answer all parts
-    - Each part should be a separate CTE with a clear label
-    - Combine results using UNION ALL with a 'metric_type' or 'category' column to distinguish parts
-    - Example structure for multi-part questions:
-      WITH top_state AS (SELECT ...),
-           top_customer AS (SELECT ...),
-           top_item AS (SELECT ...)
-      SELECT 'state' AS category, ... FROM top_state
-      UNION ALL
-      SELECT 'customer' AS category, ... FROM top_customer
-      UNION ALL
-      SELECT 'item' AS category, ... FROM top_item
-    - For "top sales state", aggregate sales by customer.state (from customer table joined with orders/payments)
-    - For "top customer", aggregate sales by customer_id
-    - For "top item" or "top product", aggregate sales by product_id
-    - Always use payment.amount for actual sales revenue (money received)
-    - Join order_header -> payment for sales amounts, order_header -> customer for customer info, order_header -> product for product info
-
 OUTPUT REQUIREMENTS:
 - Return ONLY the SQL query
 - No explanations, comments, or markdown formatting
@@ -209,7 +173,6 @@ OUTPUT REQUIREMENTS:
 - Format numbers appropriately (ROUND for currency)
 - Ensure column names in SELECT match what users expect
 - Order results logically (usually by primary grouping columns)
-- For multi-part questions, include all requested parts in a single query using CTEs and UNION ALL
 
 VERIFICATION CHECKLIST (think through before generating):
 □ Are all table names spelled correctly per schema?
@@ -219,8 +182,7 @@ VERIFICATION CHECKLIST (think through before generating):
 □ Are window functions using correct PARTITION/ORDER BY?
 □ Does date arithmetic use proper PostgreSQL functions?
 □ Are NULLs handled appropriately?
-□ Does the query answer ALL parts of the question asked (if multi-part)?
-□ For sales questions, am I using payment.amount (actual revenue) not calculated values?
+□ Does the query answer the actual question asked?
 
 Generate the PostgreSQL query now:
 """
@@ -270,8 +232,6 @@ def validate_sql_results(sql_results: list) -> tuple[bool, bool, str]:
         return False, False, "Results must be a list"
 
     has_data = False
-    error_messages = []
-    
     for result in sql_results:
         if not isinstance(result, dict):
             return False, False, "Each result must be a dictionary"
@@ -279,23 +239,11 @@ def validate_sql_results(sql_results: list) -> tuple[bool, bool, str]:
         if "data" not in result:
             return False, False, "Result missing 'data' key"
 
-        data = result["data"]
-        
-        # Handle string error messages
-        if isinstance(data, str):
-            error_messages.append(data)
-            continue  # Skip validation for error strings
-        
-        # Handle DataFrame
-        if not isinstance(data, pd.DataFrame):
-            return False, False, f"Result data must be a pandas DataFrame, got {type(data).__name__}"
+        if not isinstance(result["data"], pd.DataFrame):
+            return False, False, "Result data must be a pandas DataFrame"
 
-        if not data.empty:
+        if not result["data"].empty:
             has_data = True
-
-    # If we have error messages, return them
-    if error_messages:
-        return False, False, "; ".join(error_messages)
 
     if not has_data:
         return True, False, "Query executed successfully but returned no rows"
@@ -323,17 +271,9 @@ def format_results_for_display(sql_results) -> str:
 
     formatted = ""
     for result in sql_results:
-        data = result.get("data")
-        
-        # Handle string error messages
-        if isinstance(data, str):
+        if not result["data"].empty:
             formatted += f"\n{result['description']}:\n"
-            formatted += data
-            formatted += "\n" + "=" * 50 + "\n"
-        # Handle DataFrame
-        elif isinstance(data, pd.DataFrame) and not data.empty:
-            formatted += f"\n{result['description']}:\n"
-            formatted += data.to_string()
+            formatted += result["data"].to_string()
             formatted += "\n" + "=" * 50 + "\n"
 
     return formatted
@@ -351,31 +291,12 @@ def format_results_for_api(sql_results) -> list[dict]:
     """
     formatted_data = []
     for result in sql_results:
-        data = result.get("data")
-        
-        # Handle string error messages
-        if isinstance(data, str):
-            formatted_data.append(
-                {
-                    "description": result["description"],
-                    "data": [],
-                    "error": data  # Include error message
-                }
-            )
-        # Handle DataFrame
-        elif isinstance(data, pd.DataFrame):
-            formatted_data.append(
-                {
-                    "description": result["description"],
-                    "data": data.to_dict("records") if not data.empty else [],
-                }
-            )
-        # Handle other types (fallback)
-        else:
-            formatted_data.append(
-                {
-                    "description": result["description"],
-                    "data": [],
-                }
-            )
+        formatted_data.append(
+            {
+                "description": result["description"],
+                "data": result["data"].to_dict("records")
+                if not result["data"].empty
+                else [],
+            }
+        )
     return formatted_data

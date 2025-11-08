@@ -4,10 +4,10 @@ Handles conversational queries, SQL generation, execution, and result analysis.
 """
 
 import os
-import pandas as pd
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
+import sys
 from pathlib import Path
 from .query_runner import SQLAnalysisRunner
 from .ai_helpers import (
@@ -19,7 +19,8 @@ from .ai_helpers import (
 )
 
 # Import LangSmith configuration to enable tracing
-from ..langsmith_config import setup_langsmith
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from langsmith_config import setup_langsmith
 
 load_dotenv()
 setup_langsmith()
@@ -91,16 +92,11 @@ class AISQLRunner:
 
         results_summary = ""
         for result in sql_results:
-            data = result.get("data")
-            # Skip string error messages
-            if isinstance(data, str):
-                results_summary += f"{result['description']}: {data}\n\n"
-            # Handle DataFrame
-            elif isinstance(data, pd.DataFrame) and not data.empty:
+            if "data" in result and not result["data"].empty:
                 results_summary += (
-                    f"{result['description']}: {len(data)} rows\n"
+                    f"{result['description']}: {len(result['data'])} rows\n"
                 )
-                results_summary += data.head(10).to_string() + "\n\n"
+                results_summary += result["data"].head(10).to_string() + "\n\n"
 
         judge_prompt = f"""
         Evaluate if the SQL query results properly answer the user's question.
@@ -110,13 +106,6 @@ class AISQLRunner:
         
         SQL Results:
         {results_summary}
-        
-        IMPORTANT GUIDELINES:
-        - If the question asks for multiple things (e.g., "top state, top customer, and top item"), the results should contain data for ALL parts
-        - If results show multiple categories/types (e.g., different rows for state, customer, item), that's acceptable for multi-part questions
-        - If the question asks for "top" or "best", results should be ordered/ranked appropriately
-        - Partial answers are acceptable if they address the main intent of the question
-        - If results contain relevant data that addresses the question (even if not perfectly formatted), answer YES
         
         Does this data answer the user's question? YES or NO only.
         """

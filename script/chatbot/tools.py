@@ -6,8 +6,8 @@ from pathlib import Path
 from datetime import datetime, date
 from decimal import Decimal
 
-from ..rag.embedding import query_policies_docs
-from ..sql_generator.sql_via_python import query_executor
+from script.rag.embedding import query_policies_docs
+from script.sql_generator.sql_via_python import query_executor
 
 load_dotenv()
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
