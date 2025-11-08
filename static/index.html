@@ -255,6 +255,8 @@
                     if (response.ok) {
                         const data = await response.json();
                         console.log('Response data:', data); // Debug log
+                        console.log('Response data.data:', data.data); // Debug log for data
+                        console.log('Response data.sql_query:', data.sql_query); // Debug log for SQL
                         
                         // Check for error status in response
                         if (data.status === 'error') {
@@ -281,15 +283,28 @@
                             return;
                         }
                         
+                        // Handle data structure - ensure it's an array
+                        let responseData = null;
+                        if (mode === 'sql' && data.data) {
+                            // data.data should be an array of {description, data: [...]}
+                            responseData = Array.isArray(data.data) ? data.data : [data.data];
+                            console.log('Formatted responseData:', responseData);
+                        }
+                        
                         const aiMessage = {
                             type: 'ai',
                             content: responseContent,
-                            sqlQuery: mode === 'sql' ? data.sql_query : null,
-                            data: mode === 'sql' ? data.data : null,
-                            questionType: mode === 'sql' ? data.question_type : 'chatbot',
-                            timestamp: new Date()
+                            sqlQuery: mode === 'sql' ? (data.sql_query || null) : null,
+                            data: responseData,
+                            questionType: mode === 'sql' ? (data.question_type || 'sql') : 'chatbot',
+                            timestamp: new Date(),
+                            // Store raw data for debugging if data is not in expected format
+                            debugData: (!responseData || (Array.isArray(responseData) && responseData.length === 0)) && data.data ? data : null
                         };
                         
+                        console.log('AI Message to add:', aiMessage);
+                        console.log('Has SQL Query:', !!aiMessage.sqlQuery);
+                        console.log('Has Data:', !!aiMessage.data, 'Data length:', aiMessage.data ? aiMessage.data.length : 0);
                         setMessages(prev => [...prev, aiMessage]);
                         
                         // Update token usage (include SQL query and data if present)
@@ -450,7 +465,7 @@
                                     }}
                                 />
                                 
-                                {message.sqlQuery && (
+                                {message.sqlQuery && message.sqlQuery.trim() && (
                                     <div className="mt-3 border-t pt-3">
                                         <div className="flex items-center justify-between mb-2">
                                             <div className="text-xs font-medium text-gray-600">Generated SQL:</div>
@@ -461,6 +476,8 @@
                                                         setTimeout(() => {
                                                             e.target.textContent = 'Copy';
                                                         }, 2000);
+                                                    }).catch(err => {
+                                                        console.error('Failed to copy:', err);
                                                     });
                                                 }}
                                                 className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700 transition-colors"
@@ -474,13 +491,27 @@
                                     </div>
                                 )}
                                 
-                                {message.data && message.data.length > 0 && (
+                                {message.data && Array.isArray(message.data) && message.data.length > 0 && (
                                     <div className="mt-3 border-t pt-3">
                                         <div className="text-xs font-medium text-gray-600 mb-2">Query Results:</div>
                                         {message.data.map((result, idx) => {
-                                            const resultData = result.data || result;
-                                            const description = result.description || `Result ${idx + 1}`;
-                                            const rowCount = result.row_count || (Array.isArray(resultData) ? resultData.length : 0);
+                                            // Handle different data structures
+                                            let resultData = null;
+                                            let description = `Result ${idx + 1}`;
+                                            
+                                            if (result && typeof result === 'object') {
+                                                // Expected format: {description: "...", data: [...]}
+                                                resultData = result.data || result;
+                                                description = result.description || description;
+                                            } else if (Array.isArray(result)) {
+                                                // If result is directly an array
+                                                resultData = result;
+                                            } else {
+                                                // Fallback
+                                                resultData = result;
+                                            }
+                                            
+                                            const rowCount = Array.isArray(resultData) ? resultData.length : 0;
                                             
                                             return (
                                                 <div key={idx} className="mb-4 last:mb-0">
@@ -496,12 +527,26 @@
                                                         renderDataTable(resultData)
                                                     ) : (
                                                         <div className="text-xs text-gray-500 italic bg-gray-50 p-2 rounded">
-                                                            No data returned
+                                                            {resultData ? 'Data format not recognized' : 'No data returned'}
                                                         </div>
                                                     )}
                                                 </div>
                                             );
                                         })}
+                                    </div>
+                                )}
+                                
+                                {/* Debug: Show raw data if available but not displayed */}
+                                {message.debugData && (
+                                    <div className="mt-3 border-t pt-3">
+                                        <details className="text-xs">
+                                            <summary className="text-gray-600 cursor-pointer hover:text-gray-800">
+                                                Debug: Raw Response Data
+                                            </summary>
+                                            <pre className="mt-2 bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40">
+                                                {JSON.stringify(message.debugData, null, 2)}
+                                            </pre>
+                                        </details>
                                     </div>
                                 )}
                             </div>
