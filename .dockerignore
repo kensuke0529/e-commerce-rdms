@@ -55,6 +55,8 @@ Thumbs.db
 Dockerfile
 docker-compose.yml
 .dockerignore
+# Keep start.sh - it's needed for the container
+!start.sh
 
 # Testing
 .pytest_cache/

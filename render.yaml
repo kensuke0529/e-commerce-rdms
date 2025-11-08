@@ -1,0 +1,54 @@
+# Render Blueprint for RDMS Application
+# This file allows you to deploy the entire stack with one click on Render
+
+services:
+  # FastAPI Web Service
+  - type: web
+    name: rdms-api
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter  # Change to 'standard' or 'pro' for production
+    envVars:
+      # Database connection (use Render PostgreSQL service)
+      - key: DB_HOST
+        sync: false  # Set manually or link to PostgreSQL service
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        sync: false  # Set manually or link to PostgreSQL service
+      - key: DB_USER
+        sync: false  # Set manually or link to PostgreSQL service
+      - key: DB_PASSWORD
+        sync: false  # Set manually or link to PostgreSQL service
+      
+      # OpenAI API (required)
+      - key: OPENAI_API_KEY
+        sync: false  # Set manually in Render dashboard
+      
+      # LangSmith (optional)
+      - key: LANGCHAIN_TRACING_V2
+        value: "true"
+      - key: LANGCHAIN_API_KEY
+        sync: false  # Set manually if using LangSmith
+      - key: LANGCHAIN_PROJECT
+        value: "rdms"
+      
+      # JWT Secret
+      - key: SECRET_KEY
+        sync: false  # Set manually - use a strong secret in production
+      
+      # Python path
+      - key: PYTHONPATH
+        value: "/app/script"
+    
+    # Health check path
+    healthCheckPath: /health
+
+  # PostgreSQL Database (optional - you can use Render's managed PostgreSQL instead)
+  - type: pgsql
+    name: rdms-db
+    plan: starter  # Free tier available
+    databaseName: rdms
+    user: rdms_user
+

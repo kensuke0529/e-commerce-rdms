@@ -48,6 +48,10 @@ COPY static/ ./static/
 COPY documents/ ./documents/
 COPY data/ ./data/
 
+# Copy startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Create directories for ChromaDB and results
 RUN mkdir -p /app/result/chroma_db /app/result/image
 
@@ -55,13 +59,17 @@ RUN mkdir -p /app/result/chroma_db /app/result/image
 ENV PYTHONPATH=/app/script:$PYTHONPATH
 ENV PYTHONUNBUFFERED=1
 
-# Expose FastAPI port
+# Default port (Render will override with $PORT)
+ENV PORT=8011
+
+# Expose port (Render uses dynamic ports)
 EXPOSE 8011
 
 # Health check (using curl which is more reliable in containers)
+# Uses PORT env var for Render compatibility
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8011/health || exit 1
+    CMD sh -c 'curl -f http://localhost:${PORT:-8011}/health || exit 1'
 
-# Run the application
-CMD ["uvicorn", "script.api:app", "--host", "0.0.0.0", "--port", "8011"]
+# Run the application (Render-compatible: uses $PORT env var)
+CMD ["/app/start.sh"]
 
