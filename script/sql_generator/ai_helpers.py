@@ -163,6 +163,25 @@ CORE PRINCIPLES:
     - Moving averages: AVG() OVER (ROWS BETWEEN ...)
     - Cohort analysis: First event + subsequent events over time periods
 
+11. MULTI-PART QUESTIONS
+    - If the question asks for multiple things (e.g., "top state, top customer, and top item"), use CTEs or UNION ALL to answer all parts
+    - Each part should be a separate CTE with a clear label
+    - Combine results using UNION ALL with a 'metric_type' or 'category' column to distinguish parts
+    - Example structure for multi-part questions:
+      WITH top_state AS (SELECT ...),
+           top_customer AS (SELECT ...),
+           top_item AS (SELECT ...)
+      SELECT 'state' AS category, ... FROM top_state
+      UNION ALL
+      SELECT 'customer' AS category, ... FROM top_customer
+      UNION ALL
+      SELECT 'item' AS category, ... FROM top_item
+    - For "top sales state", aggregate sales by customer.state (from customer table joined with orders/payments)
+    - For "top customer", aggregate sales by customer_id
+    - For "top item" or "top product", aggregate sales by product_id
+    - Always use payment.amount for actual sales revenue (money received)
+    - Join order_header -> payment for sales amounts, order_header -> customer for customer info, order_header -> product for product info
+
 OUTPUT REQUIREMENTS:
 - Return ONLY the SQL query
 - No explanations, comments, or markdown formatting
@@ -170,6 +189,7 @@ OUTPUT REQUIREMENTS:
 - Format numbers appropriately (ROUND for currency)
 - Ensure column names in SELECT match what users expect
 - Order results logically (usually by primary grouping columns)
+- For multi-part questions, include all requested parts in a single query using CTEs and UNION ALL
 
 VERIFICATION CHECKLIST (think through before generating):
 □ Are all table names spelled correctly per schema?
@@ -179,7 +199,8 @@ VERIFICATION CHECKLIST (think through before generating):
 □ Are window functions using correct PARTITION/ORDER BY?
 □ Does date arithmetic use proper PostgreSQL functions?
 □ Are NULLs handled appropriately?
-□ Does the query answer the actual question asked?
+□ Does the query answer ALL parts of the question asked (if multi-part)?
+□ For sales questions, am I using payment.amount (actual revenue) not calculated values?
 
 Generate the PostgreSQL query now:
 """

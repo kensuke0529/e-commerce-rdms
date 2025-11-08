@@ -111,6 +111,13 @@ class AISQLRunner:
         SQL Results:
         {results_summary}
         
+        IMPORTANT GUIDELINES:
+        - If the question asks for multiple things (e.g., "top state, top customer, and top item"), the results should contain data for ALL parts
+        - If results show multiple categories/types (e.g., different rows for state, customer, item), that's acceptable for multi-part questions
+        - If the question asks for "top" or "best", results should be ordered/ranked appropriately
+        - Partial answers are acceptable if they address the main intent of the question
+        - If results contain relevant data that addresses the question (even if not perfectly formatted), answer YES
+        
         Does this data answer the user's question? YES or NO only.
         """
 

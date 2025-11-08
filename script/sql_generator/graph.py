@@ -157,10 +157,48 @@ def handle_error_node(state: GraphState, config: RunnableConfig) -> dict:
         )
         response = ai_runner.get_conversational_response(prompt)
     elif error_type == "invalid_results":
+        # Check if this is a multi-part question
+        question = state['user_question'].lower()
+        is_multi_part = any(keyword in question for keyword in ['and', 'also', 'show me', 'what is', 'who is'])
+        
+        if is_multi_part:
+            # Create an enhanced prompt that includes the original question with explicit instructions
+            enhanced_prompt = (
+                f"{state['user_question']} "
+                f"IMPORTANT: This is a multi-part question. Generate a SQL query using CTEs and UNION ALL "
+                f"to answer ALL parts. For example, if asking for top state, top customer, and top item, "
+                f"create separate CTEs for each (top_state, top_customer, top_item) and combine with UNION ALL."
+            )
+            # Try to generate a better SQL query
+            try:
+                better_query = ai_runner.generate_sql(enhanced_prompt)
+                # Execute the better query
+                try:
+                    better_results = ai_runner.sql_runner.run_single_query(
+                        better_query, state['user_question']
+                    )
+                    if better_results and len(better_results) > 0:
+                        # Check if better results answer the question
+                        better_judge = ai_runner.judge_sql_result(state['user_question'], better_results)
+                        if better_judge.upper() == "YES":
+                            # Analyze the better results
+                            analysis = ai_runner.analyze_sql_results(state['user_question'], better_results)
+                            return {
+                                "final_response": analysis,
+                                "sql_query": better_query,
+                                "sql_results": better_results,
+                            }
+                except Exception as e:
+                    print(f"  Better query execution failed: {e}")
+            except Exception as e:
+                print(f"  Failed to generate better query: {e}")
+        
+        # Fallback to conversational response
         prompt = (
-            f"After {max_retries} attempts, queries returned data but didn't answer: "
-            f"'{state['user_question']}'. Last query: {state['sql_query']}. "
-            f"Explain what's missing and what to clarify."
+            f"After {max_retries} attempts, queries returned data but didn't fully answer: "
+            f"'{state['user_question']}'. Last query: {state.get('sql_query', 'No query')}. "
+            f"Please explain what information is available and what might be missing. "
+            f"If this was a multi-part question, suggest how to break it down into separate queries."
         )
         response = ai_runner.get_conversational_response(prompt)
     else:
