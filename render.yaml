@@ -4,9 +4,10 @@ services:
     name: rdms-api
     # Using Python runtime (simpler for Blueprint, no Docker needed)
     runtime: python
-    # Ensure we're in the right directory and install dependencies
+    # Optimized build command for faster installs
     # Render runs from repository root by default
-    buildCommand: pip install --upgrade pip && pip install -e .
+    # Using --root-user-action=ignore to suppress warnings and speed up install
+    buildCommand: pip install --upgrade pip --root-user-action=ignore && pip install --root-user-action=ignore -e .
     startCommand: python -m uvicorn script.api:app --host 0.0.0.0 --port $PORT
     # No plan specified = Free tier (spins down after 15 min inactivity)
     envVars:

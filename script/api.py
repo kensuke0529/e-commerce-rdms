@@ -188,8 +188,19 @@ for dir_name in critical_dirs:
 
 print("=" * 60)
 
-ai_runner = AISQLRunner()
-print("✓ AI Runner initialized")
+# Lazy initialization - only create when needed to speed up startup
+_ai_runner = None
+
+def get_ai_runner():
+    """Get or create the AI runner instance (lazy initialization)."""
+    global _ai_runner
+    if _ai_runner is None:
+        print("Initializing AI Runner (lazy)...")
+        _ai_runner = AISQLRunner()
+        print("✓ AI Runner initialized")
+    return _ai_runner
+
+print("✓ AI Runner will be initialized on first use (lazy loading)")
 print("=" * 60)
 
 
@@ -212,6 +223,9 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
     """Process a natural language query and return SQL analysis results."""
     question_type = None
     try:
+        # Get AI runner (lazy initialization)
+        ai_runner = get_ai_runner()
+        
         # Try to classify the prompt
         try:
             question_type = ai_runner.classification_prompt(request.prompt)
@@ -219,7 +233,7 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
             # If classification fails, default to SQL (safer for data queries)
             question_type = "sql"
             print(f"Classification failed, defaulting to SQL: {e}")
-
+        
         if question_type == "conversational":
             response = ai_runner.get_conversational_response(request.prompt)
             return QueryResponse(

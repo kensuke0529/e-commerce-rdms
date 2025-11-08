@@ -17,7 +17,8 @@ dependencies = [
     "bcrypt>=4.0.0",
     "PyJWT>=2.8.0",
     "openai>=1.0.0",
-    "pygraphviz>=1.11",
+    # pygraphviz removed - requires compilation, only needed for diagram generation
+    # Use graphviz package instead if needed (lighter, no compilation)
     "langgraph>=0.2.30",
     "langchain-core>=0.3.13",
     "langchain-community>=0.3.0",
