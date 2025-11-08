@@ -229,6 +229,8 @@ def validate_sql_results(sql_results: list) -> tuple[bool, bool, str]:
         return False, False, "Results must be a list"
 
     has_data = False
+    error_messages = []
+    
     for result in sql_results:
         if not isinstance(result, dict):
             return False, False, "Each result must be a dictionary"
@@ -236,11 +238,23 @@ def validate_sql_results(sql_results: list) -> tuple[bool, bool, str]:
         if "data" not in result:
             return False, False, "Result missing 'data' key"
 
-        if not isinstance(result["data"], pd.DataFrame):
-            return False, False, "Result data must be a pandas DataFrame"
+        data = result["data"]
+        
+        # Handle string error messages
+        if isinstance(data, str):
+            error_messages.append(data)
+            continue  # Skip validation for error strings
+        
+        # Handle DataFrame
+        if not isinstance(data, pd.DataFrame):
+            return False, False, f"Result data must be a pandas DataFrame, got {type(data).__name__}"
 
-        if not result["data"].empty:
+        if not data.empty:
             has_data = True
+
+    # If we have error messages, return them
+    if error_messages:
+        return False, False, "; ".join(error_messages)
 
     if not has_data:
         return True, False, "Query executed successfully but returned no rows"
@@ -268,9 +282,17 @@ def format_results_for_display(sql_results) -> str:
 
     formatted = ""
     for result in sql_results:
-        if not result["data"].empty:
+        data = result.get("data")
+        
+        # Handle string error messages
+        if isinstance(data, str):
             formatted += f"\n{result['description']}:\n"
-            formatted += result["data"].to_string()
+            formatted += data
+            formatted += "\n" + "=" * 50 + "\n"
+        # Handle DataFrame
+        elif isinstance(data, pd.DataFrame) and not data.empty:
+            formatted += f"\n{result['description']}:\n"
+            formatted += data.to_string()
             formatted += "\n" + "=" * 50 + "\n"
 
     return formatted
@@ -288,12 +310,31 @@ def format_results_for_api(sql_results) -> list[dict]:
     """
     formatted_data = []
     for result in sql_results:
-        formatted_data.append(
-            {
-                "description": result["description"],
-                "data": result["data"].to_dict("records")
-                if not result["data"].empty
-                else [],
-            }
-        )
+        data = result.get("data")
+        
+        # Handle string error messages
+        if isinstance(data, str):
+            formatted_data.append(
+                {
+                    "description": result["description"],
+                    "data": [],
+                    "error": data  # Include error message
+                }
+            )
+        # Handle DataFrame
+        elif isinstance(data, pd.DataFrame):
+            formatted_data.append(
+                {
+                    "description": result["description"],
+                    "data": data.to_dict("records") if not data.empty else [],
+                }
+            )
+        # Handle other types (fallback)
+        else:
+            formatted_data.append(
+                {
+                    "description": result["description"],
+                    "data": [],
+                }
+            )
     return formatted_data

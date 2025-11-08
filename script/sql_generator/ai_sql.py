@@ -4,6 +4,7 @@ Handles conversational queries, SQL generation, execution, and result analysis.
 """
 
 import os
+import pandas as pd
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
@@ -90,11 +91,16 @@ class AISQLRunner:
 
         results_summary = ""
         for result in sql_results:
-            if "data" in result and not result["data"].empty:
+            data = result.get("data")
+            # Skip string error messages
+            if isinstance(data, str):
+                results_summary += f"{result['description']}: {data}\n\n"
+            # Handle DataFrame
+            elif isinstance(data, pd.DataFrame) and not data.empty:
                 results_summary += (
-                    f"{result['description']}: {len(result['data'])} rows\n"
+                    f"{result['description']}: {len(data)} rows\n"
                 )
-                results_summary += result["data"].head(10).to_string() + "\n\n"
+                results_summary += data.head(10).to_string() + "\n\n"
 
         judge_prompt = f"""
         Evaluate if the SQL query results properly answer the user's question.

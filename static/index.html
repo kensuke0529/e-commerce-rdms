@@ -498,11 +498,13 @@
                                             // Handle different data structures
                                             let resultData = null;
                                             let description = `Result ${idx + 1}`;
+                                            let errorMessage = null;
                                             
                                             if (result && typeof result === 'object') {
-                                                // Expected format: {description: "...", data: [...]}
+                                                // Expected format: {description: "...", data: [...], error: "..."}
                                                 resultData = result.data || result;
                                                 description = result.description || description;
+                                                errorMessage = result.error || null;
                                             } else if (Array.isArray(result)) {
                                                 // If result is directly an array
                                                 resultData = result;
@@ -523,7 +525,11 @@
                                                             </span>
                                                         )}
                                                     </div>
-                                                    {Array.isArray(resultData) && resultData.length > 0 ? (
+                                                    {errorMessage ? (
+                                                        <div className="text-xs text-red-600 bg-red-50 border border-red-200 p-2 rounded">
+                                                            ⚠️ {errorMessage}
+                                                        </div>
+                                                    ) : Array.isArray(resultData) && resultData.length > 0 ? (
                                                         renderDataTable(resultData)
                                                     ) : (
                                                         <div className="text-xs text-gray-500 italic bg-gray-50 p-2 rounded">
