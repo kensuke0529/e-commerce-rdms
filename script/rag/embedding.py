@@ -12,7 +12,7 @@ from ..langsmith_config import setup_langsmith
 load_dotenv()
 setup_langsmith()
 
-# Hardcoded paths
+# Hardcoded paths - works in Docker and deployed environments
 _script_dir = Path(__file__).parent
 _project_root = _script_dir.parent.parent
 _chroma_db_path = _project_root / "result" / "chroma_db"
@@ -21,6 +21,17 @@ _chroma_db_path.mkdir(parents=True, exist_ok=True)
 RETURN_POLICY_PDF = _project_root / "documents" / "return_policy.pdf"
 SHIPPING_POLICY_PDF = _project_root / "documents" / "shipping_policy.pdf"
 COLLECTION_NAME = "policy_docs"
+
+# Log paths for debugging (useful in Docker/Render)
+print(f"RAG Configuration:")
+print(f"  Project root: {_project_root}")
+print(f"  ChromaDB path: {_chroma_db_path}")
+print(
+    f"  Return policy PDF: {RETURN_POLICY_PDF} (exists: {RETURN_POLICY_PDF.exists()})"
+)
+print(
+    f"  Shipping policy PDF: {SHIPPING_POLICY_PDF} (exists: {SHIPPING_POLICY_PDF.exists()})"
+)
 
 # Initialize Chroma client
 chroma_client = chromadb.PersistentClient(path=str(_chroma_db_path))
@@ -75,6 +86,42 @@ if __name__ == "__main__":
     add_pdf_to_collection(SHIPPING_POLICY_PDF)
 
 
+# Initialize RAG collection lazily (only when needed)
+def _initialize_rag_collection_if_needed():
+    """Initialize RAG collection with PDFs if it doesn't exist or is empty"""
+    try:
+        collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME)
+        count = collection.count()
+
+        # If collection is empty, load PDFs
+        if count == 0:
+            print("RAG collection is empty. Initializing with PDF documents...")
+            if RETURN_POLICY_PDF.exists():
+                add_pdf_to_collection(RETURN_POLICY_PDF)
+            else:
+                print(f"Warning: Return policy PDF not found at {RETURN_POLICY_PDF}")
+
+            if SHIPPING_POLICY_PDF.exists():
+                add_pdf_to_collection(SHIPPING_POLICY_PDF)
+            else:
+                print(
+                    f"Warning: Shipping policy PDF not found at {SHIPPING_POLICY_PDF}"
+                )
+
+            print("RAG collection initialized successfully.")
+            return True
+        else:
+            # Collection already has data - no need to reload
+            return False
+    except Exception as e:
+        print(f"Error initializing RAG collection: {e}")
+        return False
+
+
+# Note: We don't initialize on import - only when first query is made
+# This improves startup performance
+
+
 # Query function to retrieve similar chunks from the collection
 def query_policies_docs(
     query_text: str,
@@ -88,18 +135,24 @@ def query_policies_docs(
     if limit is not None:
         n_results = limit
 
-    # Get the collection
+    # Get the collection (will auto-create if needed)
     try:
-        collection = chroma_client.get_collection(name=COLLECTION_NAME)
-    except Exception:
-        print(
-            f"Collection '{COLLECTION_NAME}' does not exist. Please add documents first."
-        )
+        collection = chroma_client.get_or_create_collection(name=COLLECTION_NAME)
+    except Exception as e:
+        print(f"Error getting collection: {e}")
         return []
 
     count = collection.count()
     if count == 0:
-        return []
+        # Lazy initialization: Only load PDFs when first query is made
+        print("Collection is empty, initializing on first query...")
+        _initialize_rag_collection_if_needed()
+        # Re-fetch collection after initialization
+        collection = chroma_client.get_collection(name=COLLECTION_NAME)
+        count = collection.count()
+        if count == 0:
+            print("RAG collection is still empty after initialization attempt.")
+            return []
 
     # Generate query embedding and query
     query_embedding = embedding_model.embed_query(query_text)

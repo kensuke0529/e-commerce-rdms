@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
-# Upgrade pip
-RUN pip install --no-cache-dir --upgrade pip
+# Upgrade pip (suppress root user warning - safe in Docker containers)
+RUN pip install --no-cache-dir --upgrade pip --root-user-action=ignore
 
 # Copy dependency files
 COPY pyproject.toml ./
@@ -21,7 +21,8 @@ COPY pyproject.toml ./
 # Install dependencies from pyproject.toml
 # Note: pygraphviz removed - only used for diagram generation, not required for app
 # Using graphviz package instead (easier to install, no compilation needed)
-RUN pip install --no-cache-dir \
+# Suppress root user warning (safe in Docker containers)
+RUN pip install --no-cache-dir --root-user-action=ignore \
     pandas>=2.0.0 \
     psycopg2-binary>=2.9.0 \
     python-dotenv>=1.0.0 \
