@@ -191,8 +191,28 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         sql_query = result.get("sql_query")
         sql_results = result.get("sql_results")
 
+        # Format data for API
+        formatted_data = None
+        if sql_results:
+            formatted_data = format_results_for_api(sql_results)
+
+        # If no final_response but we have SQL results, generate AI analysis
+        if not final_response and sql_results:
+            print("Warning: Graph didn't return final_response, generating analysis from results")
+            try:
+                # Pass SQL query so AI can see what was executed
+                final_response = ai_runner.analyze_sql_results(
+                    request.prompt, 
+                    sql_results,
+                    sql_query=sql_query
+                )
+            except Exception as e:
+                print(f"Error generating fallback analysis: {e}")
+                # Last resort: create a simple response
+                final_response = f"I've retrieved the data for your question: '{request.prompt}'. The query executed successfully and returned {len(formatted_data) if formatted_data else 0} results."
+
         if not final_response:
-            # Error case - SQL execution failed
+            # Error case - SQL execution failed or no results
             error_message = result.get("error_message", "Unknown error")
             return QueryResponse(
                 status="error",
@@ -203,11 +223,7 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
                 sql_query=sql_query,
             )
 
-        # Success case - format data for API
-        formatted_data = None
-        if sql_results:
-            formatted_data = format_results_for_api(sql_results)
-
+        # Success case - return with AI analysis
         return QueryResponse(
             status="success",
             question_type="sql",

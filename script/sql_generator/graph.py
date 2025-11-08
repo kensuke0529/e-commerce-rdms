@@ -72,15 +72,18 @@ def execute_sql_node(state: GraphState, config: RunnableConfig) -> dict:
                 "error_type": "no_data",
                 "error_message": "Query executed but returned no results",
             }
-        
+
         # Check if results contain error messages (string data indicates error)
         has_error = False
         error_messages = []
         for result in results:
-            if isinstance(result.get("data"), str) and ("error" in result.get("data", "").lower() or "failed" in result.get("data", "").lower()):
+            if isinstance(result.get("data"), str) and (
+                "error" in result.get("data", "").lower()
+                or "failed" in result.get("data", "").lower()
+            ):
                 has_error = True
                 error_messages.append(result.get("data", "Unknown error"))
-        
+
         if has_error:
             error_msg = "; ".join(error_messages)
             print(f"  Execution returned errors: {error_msg}")
@@ -136,11 +139,67 @@ def analyze_data_node(state: GraphState, config: RunnableConfig) -> dict:
     print("\n[NODE: ANALYZE_DATA]")
     ai_runner = config["configurable"]["ai_runner"]
 
-    analysis = ai_runner.analyze_sql_results(
-        state["user_question"], state["sql_results"]
-    )
+    try:
+        # Pass SQL query so AI can see what was executed
+        sql_query = state.get("sql_query", "")
+        analysis = ai_runner.analyze_sql_results(
+            state["user_question"], state["sql_results"], sql_query=sql_query
+        )
 
-    return {"final_response": analysis}
+        # Ensure we always return a final_response
+        if not analysis or not analysis.strip():
+            print("  Warning: Analysis was empty, generating fallback response")
+            # Fallback: create a simple analysis from the data
+            results_str = ""
+            for result in state.get("sql_results", []):
+                if "data" in result and hasattr(result["data"], "head"):
+                    results_str += f"{result.get('description', 'Results')}: {len(result['data'])} rows\n"
+
+            # Include SQL query in fallback prompt
+            sql_query = state.get("sql_query", "N/A")
+            fallback_prompt = f"""
+            Based on the SQL query results for the question: "{state["user_question"]}"
+            
+            SQL Query Executed:
+            {sql_query}
+            
+            Results summary: {results_str}
+            
+            Provide a brief analysis and insights from this data.
+            """
+            analysis = ai_runner.get_conversational_response(fallback_prompt)
+
+        print(f"  Analysis generated: {len(analysis)} characters")
+        return {"final_response": analysis}
+    except Exception as e:
+        print(f"  Error in analyze_data_node: {e}")
+        # Fallback: generate a basic response from the data
+        try:
+            results_summary = ""
+            for result in state.get("sql_results", []):
+                if "data" in result and hasattr(result["data"], "head"):
+                    results_summary += f"{result.get('description', 'Results')}: {len(result['data'])} rows\n"
+
+            # Include SQL query in fallback prompt
+            sql_query = state.get("sql_query", "N/A")
+            fallback_prompt = f"""
+            The SQL query executed successfully for: "{state["user_question"]}"
+            
+            SQL Query Executed:
+            {sql_query}
+            
+            Query results: {results_summary}
+            
+            Provide insights and analysis from this data.
+            """
+            fallback_response = ai_runner.get_conversational_response(fallback_prompt)
+            return {"final_response": fallback_response}
+        except Exception as fallback_error:
+            print(f"  Fallback also failed: {fallback_error}")
+            # Last resort: return a basic message with the data
+            return {
+                "final_response": f"I've retrieved the data for your question: '{state['user_question']}'. The query executed successfully and returned results. Please review the data provided."
+            }
 
 
 def handle_error_node(state: GraphState, config: RunnableConfig) -> dict:
@@ -184,9 +243,12 @@ def handle_error_node(state: GraphState, config: RunnableConfig) -> dict:
         response = ai_runner.get_conversational_response(prompt)
     elif error_type == "invalid_results":
         # Check if this is a multi-part question
-        question = state['user_question'].lower()
-        is_multi_part = any(keyword in question for keyword in ['and', 'also', 'show me', 'what is', 'who is'])
-        
+        question = state["user_question"].lower()
+        is_multi_part = any(
+            keyword in question
+            for keyword in ["and", "also", "show me", "what is", "who is"]
+        )
+
         if is_multi_part:
             # Create an enhanced prompt that includes the original question with explicit instructions
             enhanced_prompt = (
@@ -201,14 +263,20 @@ def handle_error_node(state: GraphState, config: RunnableConfig) -> dict:
                 # Execute the better query
                 try:
                     better_results = ai_runner.sql_runner.run_single_query(
-                        better_query, state['user_question']
+                        better_query, state["user_question"]
                     )
                     if better_results and len(better_results) > 0:
                         # Check if better results answer the question
-                        better_judge = ai_runner.judge_sql_result(state['user_question'], better_results)
+                        better_judge = ai_runner.judge_sql_result(
+                            state["user_question"], better_results
+                        )
                         if better_judge.upper() == "YES":
-                            # Analyze the better results
-                            analysis = ai_runner.analyze_sql_results(state['user_question'], better_results)
+                            # Analyze the better results with the SQL query
+                            analysis = ai_runner.analyze_sql_results(
+                                state["user_question"],
+                                better_results,
+                                sql_query=better_query,
+                            )
                             return {
                                 "final_response": analysis,
                                 "sql_query": better_query,
@@ -218,7 +286,7 @@ def handle_error_node(state: GraphState, config: RunnableConfig) -> dict:
                     print(f"  Better query execution failed: {e}")
             except Exception as e:
                 print(f"  Failed to generate better query: {e}")
-        
+
         # Fallback to conversational response
         prompt = (
             f"After {max_retries} attempts, queries returned data but didn't fully answer: "

@@ -114,16 +114,34 @@ class AISQLRunner:
         response = self.llm.invoke([HumanMessage(content=judge_prompt)])
         return response.content.strip().upper()
 
-    def analyze_sql_results(self, prompt: str, sql_results: list) -> str:
+    def analyze_sql_results(self, prompt: str, sql_results: list, sql_query: str = None) -> str:
         """
         Analyze SQL results and generate insights. Used by graph.py.
+        
+        Args:
+            prompt: The user's original question
+            sql_results: The results from executing the SQL query
+            sql_query: The SQL query that was executed (optional but recommended)
         """
         results_str = format_results_for_display(sql_results)
-        self.chat_history.append(
-            HumanMessage(
-                content=f"Here are the SQL query results:\n{results_str}\nUser question: {prompt}"
-            )
-        )
+        
+        # Build comprehensive context including SQL query
+        analysis_prompt = f"""User Question: {prompt}
+
+"""
+        if sql_query:
+            analysis_prompt += f"""SQL Query Executed:
+{sql_query}
+
+"""
+        
+        analysis_prompt += f"""SQL Query Results:
+{results_str}
+
+Please analyze these results and provide comprehensive insights, trends, and business implications based on the data. Reference specific numbers and patterns from the results."""
+        
+        self.chat_history.append(HumanMessage(content=analysis_prompt))
+        
         # Use LangChain for tracing
         response = self.analysis_llm.invoke(self.chat_history)
         content = response.content
@@ -312,7 +330,8 @@ class AISQLRunner:
                 print("-" * 40)
 
         if judge_result == "YES":
-            analysis = self.analyze_sql_results(prompt, self.sql_results)
+            # Pass SQL query so AI can see what was executed
+            analysis = self.analyze_sql_results(prompt, self.sql_results, sql_query=query)
             if verbose:
                 print(f"\nAI ANALYSIS:")
                 print("=" * 60)
@@ -380,18 +399,9 @@ class AISQLRunner:
             }
 
         formatted_data = format_results_for_api(self.sql_results)
-        results_str = format_results_for_display(self.sql_results)
-
-        self.chat_history.append(
-            HumanMessage(
-                content=f"Here are the SQL query results:\n{results_str}\nUser question: {prompt}"
-            )
-        )
-
-        # Use LangChain for tracing
-        response = self.analysis_llm.invoke(self.chat_history)
-        analysis = response.content
-        self.chat_history.append(AIMessage(content=analysis))
+        
+        # Use analyze_sql_results which includes SQL query in context
+        analysis = self.analyze_sql_results(prompt, self.sql_results, sql_query=query)
 
         return {
             "status": "success",
