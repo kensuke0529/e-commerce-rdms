@@ -188,6 +188,19 @@ for dir_name in critical_dirs:
 
 print("=" * 60)
 
+# Debug: Check database environment variables (without exposing passwords)
+print("Database Configuration Check:")
+db_vars = {
+    "DB_HOST": os.getenv("DB_HOST", "NOT_SET"),
+    "DB_PORT": os.getenv("DB_PORT", "NOT_SET"),
+    "DB_NAME": os.getenv("DB_NAME", "NOT_SET"),
+    "DB_USER": os.getenv("DB_USER", "NOT_SET"),
+    "DB_PASSWORD": "***SET***" if os.getenv("DB_PASSWORD") else "NOT_SET"
+}
+for key, value in db_vars.items():
+    print(f"  {key}: {value}")
+print("=" * 60)
+
 # Lazy initialization - only create when needed to speed up startup
 _ai_runner = None
 
@@ -314,6 +327,25 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
 @app.get("/health", response_model=HealthResponse, tags=["Health"])
 def health_check():
     """Health check endpoint with database connectivity test."""
+    # Check if database environment variables are set
+    db_host = os.getenv("DB_HOST")
+    db_port = os.getenv("DB_PORT")
+    db_name = os.getenv("DB_NAME")
+    db_user = os.getenv("DB_USER")
+    db_password = os.getenv("DB_PASSWORD")
+    
+    if not all([db_host, db_port, db_name, db_user, db_password]):
+        missing = []
+        if not db_host: missing.append("DB_HOST")
+        if not db_port: missing.append("DB_PORT")
+        if not db_name: missing.append("DB_NAME")
+        if not db_user: missing.append("DB_USER")
+        if not db_password: missing.append("DB_PASSWORD")
+        return HealthResponse(
+            status="degraded",
+            message=f"API is running but database environment variables are missing: {', '.join(missing)}. Please check Render dashboard configuration."
+        )
+    
     try:
         # Test database connection
         from .sql_generator.sql_via_python import query_executor

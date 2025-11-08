@@ -29,6 +29,7 @@ class query_executor:
                 if not self.password: missing.append("DB_PASSWORD")
                 error_msg = f"Missing database environment variables: {', '.join(missing)}"
                 print(f'-- Connection error: {error_msg} --')
+                print(f'-- Debug: host={self.host}, port={self.port}, database={self.database}, user={self.user}, password={"***" if self.password else "None"} --')
                 raise ValueError(error_msg)
             
             self.conn = psycopg2.connect(
