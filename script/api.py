@@ -146,6 +146,7 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 # Initialize AI runner lazily (like chatbot) - will be created on first use
 _ai_runner = None
 
+
 def get_ai_runner():
     """Get or create AISQLRunner instance (lazy initialization like chatbot)."""
     global _ai_runner
@@ -156,6 +157,7 @@ def get_ai_runner():
         except Exception as e:
             print(f"✗ Failed to initialize AISQLRunner: {e}")
             import traceback
+
             traceback.print_exc()
             raise  # Re-raise so the endpoint can handle it
     return _ai_runner
@@ -191,7 +193,7 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
                 error="AI SQL Runner initialization failed",
                 message=f"Failed to initialize AI SQL Runner: {str(e)}. Please check server logs and ensure all environment variables (OPENAI_API_KEY, DB_*) are set correctly.",
             )
-        
+
         # Try to classify the prompt
         try:
             question_type = ai_runner.classification_prompt(request.prompt)
@@ -225,13 +227,13 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
 
         # If no final_response but we have SQL results, generate AI analysis
         if not final_response and sql_results:
-            print("Warning: Graph didn't return final_response, generating analysis from results")
+            print(
+                "Warning: Graph didn't return final_response, generating analysis from results"
+            )
             try:
                 # Pass SQL query so AI can see what was executed
                 final_response = ai_runner.analyze_sql_results(
-                    request.prompt, 
-                    sql_results,
-                    sql_query=sql_query
+                    request.prompt, sql_results, sql_query=sql_query
                 )
             except Exception as e:
                 print(f"Error generating fallback analysis: {e}")
@@ -265,9 +267,10 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         # Ensure question_type is set even in error cases
         # If it was SQL-related, preserve that, otherwise assume SQL (safer default)
         error_question_type = question_type if question_type else "sql"
-        
+
         # Log the full error for debugging (like chatbot does)
         import traceback
+
         error_trace = traceback.format_exc()
         print(f"Error in analyze_query: {str(e)}")
         print(f"Traceback: {error_trace}")
@@ -279,7 +282,9 @@ def analyze_query(request: QueryRequest, current_user: str = Depends(get_current
         elif "openai" in error_message.lower() or "api key" in error_message.lower():
             user_message = "OpenAI API error. Please check your API key and ensure you have available credits."
         else:
-            user_message = f"An error occurred while processing your request: {error_message}"
+            user_message = (
+                f"An error occurred while processing your request: {error_message}"
+            )
 
         return QueryResponse(
             status="error",
@@ -313,10 +318,11 @@ def diagnostics():
         "database_connection": "unknown",
         "openai_connection": "unknown",
     }
-    
+
     # Test database connection
     try:
         from sql_generator.sql_via_python import query_executor
+
         test_query = query_executor("SELECT 1")
         test_query.connect_to_db()
         test_query.cur.close()
@@ -324,7 +330,7 @@ def diagnostics():
         diagnostics_info["database_connection"] = "✓ Connected"
     except Exception as e:
         diagnostics_info["database_connection"] = f"✗ Error: {str(e)}"
-    
+
     # Test OpenAI connection (just check if key is valid format)
     openai_key = os.getenv("OPENAI_API_KEY")
     if openai_key:
@@ -334,7 +340,7 @@ def diagnostics():
             diagnostics_info["openai_connection"] = "⚠ Key format may be invalid"
     else:
         diagnostics_info["openai_connection"] = "✗ No key provided"
-    
+
     return diagnostics_info
 
 
@@ -370,4 +376,6 @@ def chat_endpoint(request: ChatRequest, current_user: str = Depends(get_current_
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8011)
+    # Use PORT from environment variable (Railway, Heroku, etc.) or default to 8011
+    port = int(os.getenv("PORT", 8011))
+    uvicorn.run(app, host="0.0.0.0", port=port)

@@ -10,6 +10,14 @@ The SQL Generator enables business users and analysts to query data using natura
 
 ![SQL Agent Graph](../../result/image/sql_agent_graph_simplified.png)
 
+
+Example internal sql generation: 
+![Chatbot Tool-Call Flow Diagram](../../result/image/image.png)
+
+Generated SQL query: 
+![Chatbot Tool-Call Flow Diagram](../../result/image/sql.png)
+
+
 ## Business Value
 
 ### Democratized Data Access

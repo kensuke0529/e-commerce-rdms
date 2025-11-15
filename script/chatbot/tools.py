@@ -6,8 +6,8 @@ from pathlib import Path
 from datetime import datetime, date
 from decimal import Decimal
 
-from script.rag.embedding import query_policies_docs
-from script.sql_generator.sql_via_python import query_executor
+from rag.embedding import query_policies_docs
+from sql_generator.sql_via_python import query_executor
 
 load_dotenv()
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
@@ -190,5 +190,14 @@ def call_functions(name, args):
     elif name == "get_my_orders":
         return get_my_orders(**args)
     elif name == "query_policies_docs":
-        return query_policies_docs(**args)
+        result = query_policies_docs(**args)
+        # If result is empty, return a helpful message instead
+        if not result or (isinstance(result, list) and len(result) == 0):
+            return {
+                "message": "No policy documents found in the knowledge base. The policy documents may not be initialized yet.",
+                "documents": []
+            }
+        return result
+    elif name == "get_product_reviews":
+        return get_product_reviews(**args)
     return None

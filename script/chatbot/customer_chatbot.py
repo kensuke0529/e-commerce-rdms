@@ -12,7 +12,7 @@ from langchain_core.tools import StructuredTool
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from langsmith_config import setup_langsmith
 
-from script.chatbot.tools import call_functions
+from chatbot.tools import call_functions
 
 load_dotenv()
 setup_langsmith()

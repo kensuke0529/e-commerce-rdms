@@ -127,3 +127,4 @@ dmypy.json
 # uv.lock
 # poetry.lock
 # Pipfile.lock
+.vercel

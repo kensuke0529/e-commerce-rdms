@@ -271,10 +271,15 @@ def format_results_for_display(sql_results) -> str:
 
     formatted = ""
     for result in sql_results:
-        if not result["data"].empty:
+        # Check if data is a DataFrame before calling .empty
+        if isinstance(result["data"], pd.DataFrame) and not result["data"].empty:
             formatted += f"\n{result['description']}:\n"
             formatted += result["data"].to_string()
             formatted += "\n" + "=" * 50 + "\n"
+        elif isinstance(result["data"], str):
+            # Handle error messages
+            formatted += f"\n{result['description']}: {result['data']}\n"
+            formatted += "=" * 50 + "\n"
 
     return formatted
 
@@ -291,12 +296,22 @@ def format_results_for_api(sql_results) -> list[dict]:
     """
     formatted_data = []
     for result in sql_results:
-        formatted_data.append(
-            {
-                "description": result["description"],
-                "data": result["data"].to_dict("records")
-                if not result["data"].empty
-                else [],
-            }
-        )
+        # Check if data is a DataFrame before calling .empty
+        if isinstance(result["data"], pd.DataFrame):
+            formatted_data.append(
+                {
+                    "description": result["description"],
+                    "data": result["data"].to_dict("records")
+                    if not result["data"].empty
+                    else [],
+                }
+            )
+        else:
+            # Handle error messages (strings) or other types
+            formatted_data.append(
+                {
+                    "description": result["description"],
+                    "data": result["data"] if isinstance(result["data"], str) else [],
+                }
+            )
     return formatted_data

@@ -7,6 +7,7 @@ An AI-powered customer service chatbot including conversations, tool-based funct
 The customer service chatbot provides automated, intelligent support for e-commerce customers, which brings following benefits to businesses:
 - reducing support workload  
 - improving customer satisfaction through instant, accurate responses to common inquiries
+- Example chat: ![Chatbot Tool-Call Flow Diagram](../../result/image/chat.png)
 
 
 

@@ -9,6 +9,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage, AIMessage
 import sys
 from pathlib import Path
+import pandas as pd
 from .query_runner import SQLAnalysisRunner
 from .ai_helpers import (
     classify_question_type,
@@ -100,7 +101,8 @@ class AISQLRunner:
 
         results_summary = ""
         for result in sql_results:
-            if "data" in result and not result["data"].empty:
+            # Check if data is a DataFrame before calling .empty
+            if "data" in result and isinstance(result["data"], pd.DataFrame) and not result["data"].empty:
                 results_summary += (
                     f"{result['description']}: {len(result['data'])} rows\n"
                 )
