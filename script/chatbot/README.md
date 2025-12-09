@@ -7,13 +7,10 @@ An AI-powered customer service chatbot including conversations, tool-based funct
 The customer service chatbot provides automated, intelligent support for e-commerce customers, which brings following benefits to businesses:
 - reducing support workload  
 - improving customer satisfaction through instant, accurate responses to common inquiries
-- Example chat: ![Chatbot Tool-Call Flow Diagram](../../result/image/chat.png)
 
-
-
+![chatbot](../../result/image/chatbot.png)
 ## Business Value
 
-### Customer Experience
 
 - **24/7 Availability** + **Reduced Wait Times**: Instant responses to customer inquiries at any time
 - **Reduced Wait Times** + **Consistent Service**: Standardized, accurate answers to common questions
@@ -22,16 +19,12 @@ The customer service chatbot provides automated, intelligent support for e-comme
 
 
 ### 1. FAQ Support
-
-**Business Function**: Answers frequently asked questions from a curated knowledge base
-
-**Value**: Reduces repetitive inquiries and ensures consistent, accurate information delivery
+**Function**: Answers frequently asked questions from a curated knowledge base and reduces repetitive inquiries and ensures consistent, accurate information delivery
 
 ### 2. Order History Retrieval
 
-**Business Function**: Provides customers with instant access to their complete order history
+**Function**: Provides customers with instant access to their complete order history
 
-**Value**:
 
 - Customers can track orders without contacting support
 - Includes order details, payment information, and shipping status
@@ -40,9 +33,7 @@ The customer service chatbot provides automated, intelligent support for e-comme
 
 ### 3. Product Review Lookup
 
-**Business Function**: Retrieves and presents product reviews and ratings to help customers make informed decisions
-
-**Value**:
+**Function**: Retrieves and presents product reviews and ratings to help customers make informed decisions
 
 - Enables customers to research products independently
 - Builds trust through transparent review access
@@ -51,52 +42,17 @@ The customer service chatbot provides automated, intelligent support for e-comme
 
 ### 4. Policy Document Search
 
-**Business Function**: Semantic search across return and shipping policy documents using advanced RAG technology
-
-**Value**:
-
+**Function**: Semantic search across return and shipping policy documents using advanced RAG technology
 - Customers get precise answers from official policy documents
 - Reduces policy-related support tickets
 - Ensures compliance with official terms and conditions
 
-## How It Works
-
-
-### Chatbot Workflow
+## Chatbot Workflow
 ![Chatbot Tool-Call Flow Diagram](../../result/image/chatbot_tool_call_flow.png)
 
 ### Intelligent Tool Selection
 
-The chatbot automatically determines which capabilities to use based on customer questions, enabling it to:
-
-- Answer simple questions directly
-- Retrieve data from the database when needed
-- Search policy documents for specific information
-- Combine multiple tools for complex inquiries
-
-### Sequential Tool Execution
-
-For complex questions, the chatbot can:
-
-- Execute multiple tools in sequence
-- Synthesize information from different sources
-- Provide comprehensive answers that combine data from orders, policies, and FAQs
-
-## Key Features
-
-### Context Awareness
-
-- Remembers conversation history across multiple turns
-- Understands references to previous messages
-- Maintains customer context throughout the session
-
-
-### Security & Reliability
-
-- Parameterized queries prevent SQL injection
-- Input validation and sanitization
-- Type-safe data handling
-- Error handling for robust operation
+The chatbot determines which tools to use based on customer questions, enabling it to retrieve data from the database when needed and combine multiple tools for complex inquiries
 
 ## Additional Resources
 
@@ -105,3 +61,4 @@ For complex questions, the chatbot can:
 - [Data Engineering Documentation](../../sql/README.md)
 
 ---
+Example chat: ![Chatbot Tool-Call Flow Diagram](../../result/image/chat.png)

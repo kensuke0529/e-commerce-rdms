@@ -91,37 +91,30 @@ def query_policies_docs(
     if limit is not None:
         n_results = limit
 
-    # Get the collection (use existing database)
+    # Get the collection
     try:
         collection = chroma_client.get_collection(name=COLLECTION_NAME)
-    except Exception as e:
+    except Exception:
         print(
-            f"Collection '{COLLECTION_NAME}' does not exist at path {_chroma_db_path}: {e}"
+            f"Collection '{COLLECTION_NAME}' does not exist. Please add documents first."
         )
         return []
 
     count = collection.count()
     if count == 0:
-        print(f"Collection '{COLLECTION_NAME}' exists but is empty (count: {count})")
         return []
 
     # Generate query embedding and query
-    try:
-        query_embedding = embedding_model.embed_query(query_text)
-        results = collection.query(
-            query_embeddings=[query_embedding],
-            n_results=min(n_results, count),
-            include=["documents", "distances", "metadatas"],
-        )
+    query_embedding = embedding_model.embed_query(query_text)
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=min(n_results, count),
+        include=["documents", "distances", "metadatas"],
+    )
 
-        documents = results.get("documents", [])
-        if documents and len(documents) > 0 and len(documents[0]) > 0:
-            # Return the list of document chunks
-            return documents[0]
-        else:
-            # Return empty list if no documents found
-            print(f"No documents found for query: {query_text}")
-            return []
-    except Exception as query_error:
-        print(f"Error querying collection: {query_error}")
-        return []
+    documents = results.get("documents", [])
+    return (
+        documents[0]
+        if documents and len(documents) > 0 and len(documents[0]) > 0
+        else []
+    )

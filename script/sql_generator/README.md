@@ -2,20 +2,12 @@
 
 An AI-powered SQL query generation system for internal analytics use. Converts natural language business questions into optimized SQL queries with automatic error handling, validation, and result analysis.
 
-> **Note**: This is an internal tool for data analysts and business users. For customer-facing SQL capabilities, see the [Customer Chatbot](../chatbot/README.md).
-
 ## Overview
 
-The SQL Generator enables business users and analysts to query data using natural language, eliminating the need for SQL expertise. It automatically converts questions into database queries, executes them, validates results, and provides AI-powered insights.
-
-![SQL Agent Graph](../../result/image/sql_agent_graph_simplified.png)
+The SQL Generator enables business users and analysts to query data using natural language, eliminating the need for SQL expertise. 
 
 
-Example internal sql generation: 
-![Chatbot Tool-Call Flow Diagram](../../result/image/image.png)
-
-Generated SQL query: 
-![Chatbot Tool-Call Flow Diagram](../../result/image/sql.png)
+![sql](../../result/image/SQLgenerator.png)
 
 
 ## Business Value
@@ -30,43 +22,24 @@ Generated SQL query:
 - **Reduced Query Time**: Instant SQL generation vs. manual query writing
 - **Error Reduction**: Automatic validation prevents incorrect results
 - **Intelligent Retry**: System automatically corrects and retries failed queries
-- **Resource Optimization**: Frees data analysts for complex analytical work
 
 ### Enhanced Decision Making
-
 - **AI-Powered Insights**: Automatic analysis of query results with business context
-- **Actionable Recommendations**: Suggests next steps based on findings
-- **Comprehensive Analysis**: Combines data retrieval with interpretation
 
 ## Core Capabilities
 
 ### 1. Natural Language to SQL Conversion
-
-**Business Function**: Converts business questions into database queries automatically
-
-**Value**:
+**Function**: Enable sales/marketing team access to database and get insights from
 
 - Enables non-technical users to access data independently
 - Reduces time from question to answer
-- Ensures queries follow best practices and business logic
 
-**Supported Question Types**:
-
-- Revenue and sales analytics
-- Customer behavior analysis
-- Product performance metrics
-- Order and purchase history
-- Statistical calculations and aggregations
 
 ### 2. Intelligent Question Classification
 
-**Business Function**: Automatically determines if a question requires database access or is conversational
-
-**Value**:
-
+**Function**: Automatically determines if a question requires database access or is conversational
 - Routes questions appropriately without user intervention
 - Handles both data queries and general questions
-- Provides conversational responses when SQL isn't needed
 
 **Question Categories**:
 
@@ -74,35 +47,20 @@ Generated SQL query:
 - **Conversational Questions**: General inquiries (e.g., "How does this system work?")
 
 ### 3. Result Validation
-
-**Business Function**: Ensures query results actually answer the user's question
-
+**Function**: Ensures query results actually answer the user's question
 **Value**:
-
 - Prevents misleading or incomplete answers
-- Validates data quality before presenting results
 - Automatically retries with corrected queries when validation fails
-- Ensures business questions are fully answered
 
 ### 4. AI-Powered Result Analysis
-
-**Business Function**: Generates insights and recommendations from query results
-
+**Function**: Generates insights and recommendations from query results
 **Value**:
-
 - Transforms raw data into actionable insights
 - Identifies trends and patterns automatically
 - Explains business implications of findings
-- Suggests next steps based on results
-
-**Analysis Components**:
-
-- Key findings and important data points
-- Trend identification
-- Business implications
-- Actionable recommendations
 
 ## How It Works
+![SQL Agent Graph](../../result/image/sql_agent_graph_simplified.png)
 
 ### Question Processing Workflow
 
@@ -134,29 +92,6 @@ The system processes questions through multiple stages:
 - Analysis to provide insights
 - Response formatting for clarity
 
-## Key Features
-
-### Schema Awareness
-
-- Understands complete database structure
-- Knows table relationships and constraints
-- Applies business logic automatically
-- Generates queries that respect data integrity
-
-### Intelligent Retry Logic
-
-- Automatically corrects syntax errors
-- Fixes logic errors based on validation feedback
-- Handles empty results gracefully
-- Provides user-friendly error messages
-
-### Result Analysis
-
-- Highlights key findings automatically
-- Identifies trends and patterns
-- Explains business implications
-- Suggests actionable next steps
-
 
 ## Additional Resources
 
@@ -165,3 +100,9 @@ The system processes questions through multiple stages:
 - [Data Engineering Documentation](../../sql/README.md)
 
 ---
+
+Example internal sql generation: 
+![Chatbot Tool-Call Flow Diagram](../../result/image/image.png)
+
+Generated SQL query: 
+![Chatbot Tool-Call Flow Diagram](../../result/image/sql.png)
